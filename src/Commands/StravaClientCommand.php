@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 
 class StravaClientCommand extends Command
 {
-    public $signature = 'strava-client';
+    public $signature = 'strava-client:install';
 
     public $description = 'My command';
 
