@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Integrations\Strava\Requests;
+namespace JordanPartridge\StravaClient\Http\Integration\Strava\Requests;
 
+use InvalidArgumentException;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
+use function PHPUnit\Framework\returnArgument;
 
 class ActivityRequest extends Request
 {
@@ -19,11 +21,14 @@ class ActivityRequest extends Request
 
     public function __construct(int $id)
     {
+        if ($id <= 0) {
+            throw new InvalidArgumentException('Activity ID must be a positive integer.');
+        }
         $this->id = $id;
     }
 
     public function resolveEndpoint(): string
     {
-        return '/activities/' . $this->id;
+        return sprintf('/activities/%d', $this->id);
     }
 }
