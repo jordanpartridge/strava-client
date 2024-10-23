@@ -2,6 +2,7 @@
 
 namespace JordanPartridge\StravaClient;
 
+use InvalidArgumentException;
 use JordanPartridge\StravaClient\Requests\AthleteActivityRequest;
 use JordanPartridge\StravaClient\Requests\TokenExchange;
 use Saloon\Exceptions\Request\FatalRequestException;
@@ -41,18 +42,58 @@ class Connector extends BaseConnector
 
 
     /**
-     * I think I do not need error handling here, I'm going to leave it to
-     * the service to handle that I wonder if I can make this file more internal to
-     * the package.
+     * Exchange an authorization code for an access token or refresh an existing token.
      *
-     * @param string $code
-     * @param string $grant_type
-     * @throws FatalRequestException
-     * @throws RequestException
-     * @return Response
+     * This method handles two OAuth 2.0 flows:
+     * 1. Converting an authorization code to an access token (initial authentication)
+     * 2. Using a refresh token to obtain a new access token (token refresh)
+     *
+     * Example using authorization code:
+     * ```php
+     * $response = $connector->exchangeToken(
+     *     code: $authorizationCode,
+     *     grant_type: 'authorization_code'
+     * );
+     * ```
+     *
+     * Example refreshing a token:
+     * ```php
+     * $response = $connector->exchangeToken(
+     *     code: $refreshToken,
+     *     grant_type: 'refresh_token'
+     * );
+     * ```
+     *
+     * The response will contain:
+     * ```json
+     * {
+     *     "token_type": "Bearer",
+     *     "access_token": "a1b2c3...",
+     *     "refresh_token": "e5f6g7...",
+     *     "expires_at": 1568775134,
+     *     "scope": "read,activity:read"
+     * }
+     * ```
+     *
+     * @param string $code The authorization code or refresh token depending on grant type
+     * @param string $grant_type Must be either 'authorization_code' or 'refresh_token'
+     *
+     * @throws InvalidArgumentException When an invalid grant type is provided
+     * @throws RequestException When the API request fails
+     * @throws FatalRequestException When a critical request error occurs
+     *
+     * @return Response The Saloon Response object containing the token data
+     *
+     * @link https://developers.strava.com/docs/getting-started/ Strava API Documentation
      */
     public function exchangeToken(string $code, string $grant_type): Response
     {
+        $allowed_grant_types = ['authorization_code', 'refresh_token'];
+
+        if (!in_array($grant_type, $allowed_grant_types)) {
+            throw new InvalidArgumentException('Invalid grant type provided.');
+        }
+
         return $this->send(new TokenExchange($code, $grant_type));
     }
 
@@ -77,6 +118,6 @@ class Connector extends BaseConnector
 
     protected function defaultAuth(): ?TokenAuthenticator
     {
-        return  $this->token ? new TokenAuthenticator($this->token) : null;
+        return $this->token ? new TokenAuthenticator($this->token) : null;
     }
 }
