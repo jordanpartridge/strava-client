@@ -8,7 +8,7 @@ class StravaClientCommand extends Command
 {
     public $signature = 'strava-client:install';
 
-    public $description = 'My command';
+    public $description = 'Not sure if we will need a command yet, but this could allow some customized setup';
 
     public function handle(): int
     {

@@ -1,12 +1,12 @@
 <?php
 
-use JordanPartridge\StravaClient\Http\Integration\Strava\Strava;
-use Saloon\Http\Connector;
+use JordanPartridge\StravaClient\Connector;
+use Saloon\Http\Connector as BaseConnector;
 
 arch('it will not use debugging functions')
     ->expect(['dd', 'dump', 'ray'])
     ->each->not->toBeUsed();
 
-arch('Strava Client extends a connector')
-    ->expect(Strava::class)
-    ->toExtend(Connector::class);
+arch('Connector Client extends a connector')
+    ->expect(Connector::class)
+    ->toExtend(BaseConnector::class);

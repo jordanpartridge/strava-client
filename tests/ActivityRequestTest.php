@@ -1,6 +1,6 @@
 <?php
 
-use JordanPartridge\StravaClient\Http\Integration\Strava\Requests\ActivityRequest;
+use JordanPartridge\StravaClient\Requests\ActivityRequest;
 
 it('uses the correct endpoint', function () {
     $request = new ActivityRequest(1);

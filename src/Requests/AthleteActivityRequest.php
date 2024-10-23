@@ -1,6 +1,6 @@
 <?php
 
-namespace JordanPartridge\StravaClient\Http\Integration\Strava\Requests;
+namespace JordanPartridge\StravaClient\Requests;
 
 use InvalidArgumentException;
 use Saloon\Enums\Method;

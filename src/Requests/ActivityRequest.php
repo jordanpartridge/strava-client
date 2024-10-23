@@ -1,11 +1,10 @@
 <?php
 
-namespace JordanPartridge\StravaClient\Http\Integration\Strava\Requests;
+namespace JordanPartridge\StravaClient\Requests;
 
 use InvalidArgumentException;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
-use function PHPUnit\Framework\returnArgument;
 
 class ActivityRequest extends Request
 {
