@@ -2,6 +2,12 @@
 
 All notable changes to `strava-client` will be documented in this file.
 
+## v0.1.1 - 2024-10-28
+
+- Initial release
+- Minor readme checks
+- fixes to tests
+
 ## v0.1 - 2024-10-28
 
 ### What's Changed
