@@ -2,9 +2,9 @@
 
 namespace JordanPartridge\StravaClient;
 
+use JordanPartridge\StravaClient\Commands\StravaClientCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use JordanPartridge\StravaClient\Commands\StravaClientCommand;
 
 class StravaClientServiceProvider extends PackageServiceProvider
 {

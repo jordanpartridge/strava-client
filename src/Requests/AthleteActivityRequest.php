@@ -16,7 +16,7 @@ class AthleteActivityRequest extends Request
     public function __construct(
         private readonly array $payload,
     ) {
-        if(!isset($payload['page']) || !isset($payload['per_page'])) {
+        if (! isset($payload['page']) || ! isset($payload['per_page'])) {
             throw new InvalidArgumentException('Page and per_page are required');
         }
     }
@@ -32,7 +32,7 @@ class AthleteActivityRequest extends Request
     public function resolveQuery(): array
     {
         return [
-            'page'     => $this->payload['page'],
+            'page' => $this->payload['page'],
         ];
     }
 }

@@ -28,7 +28,7 @@ class TokenExchange extends Request implements HasBody
 
     public function __construct(string $code, string $grant_type = 'authorization_code')
     {
-        $this->token      = $code;
+        $this->token = $code;
         $this->grant_type = $grant_type;
     }
 
@@ -49,9 +49,9 @@ class TokenExchange extends Request implements HasBody
     public function defaultBody(): array
     {
         return [
-            'client_id'            => config('services.strava.client_id'),
-            'client_secret'        => config('services.strava.client_secret'),
-            'grant_type'           => $this->grant_type,
+            'client_id' => config('services.strava.client_id'),
+            'client_secret' => config('services.strava.client_secret'),
+            'grant_type' => $this->grant_type,
             $this->getTokenLabel() => $this->token,
         ];
     }

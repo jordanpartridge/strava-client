@@ -132,7 +132,7 @@ class Connector extends BaseConnector
     {
         return [
             'Content-Type' => 'application/json',
-            'Accept'       => 'application/json',
+            'Accept' => 'application/json',
         ];
     }
 
