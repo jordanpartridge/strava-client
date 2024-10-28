@@ -3,6 +3,7 @@
 namespace JordanPartridge\StravaClient;
 
 use InvalidArgumentException;
+use JordanPartridge\StravaClient\Requests\ActivityRequest;
 use JordanPartridge\StravaClient\Requests\AthleteActivityRequest;
 use JordanPartridge\StravaClient\Requests\TokenExchange;
 use Saloon\Exceptions\Request\FatalRequestException;
@@ -13,22 +14,27 @@ use Saloon\Http\Response;
 
 class Connector extends BaseConnector
 {
-    private ?string $token = null;
+    /**
+     * The access token for the connector.
+     */
+    private ?string $access_token = null;
 
+    private string $refresh_token;
 
     /**
-     * Set the bearer token once we have it, not sure if this will
-     * eventually be handled internally but as of right now I'm trying
-     * to make sure all the functionality gets handled.
-     * @param string|null $token
-     *
-     * @return Connector
+     * Set the token for the connector.
      */
-    public function setToken(?string $token = null): Connector
+    public function setToken(string $access_token, string $refresh_token): Connector
     {
-        $this->token = $token;
+        $this->access_token = $access_token;
+        $this->refresh_token = $refresh_token;
 
         return $this;
+    }
+
+    public function getActivity(int $id): Response
+    {
+        return $this->send(new ActivityRequest($id));
     }
 
     /**
@@ -40,6 +46,19 @@ class Connector extends BaseConnector
         return $this->send(new AthleteActivityRequest($payload));
     }
 
+    /**
+     * Since I want this class to be the only one maintaining the token, and I don't want to expose the token
+     * let's give other classes an easy way to refresh the token, now that im thinking about this,
+     * This could potentially be the wrong approach since I just said I want this class to be the only one maintaining
+     * the token, but let's iterate and see if this is the right approach.
+     *
+     * @throws FatalRequestException
+     * @throws RequestException
+     */
+    public function refreshToken(): Response
+    {
+        return $this->exchangeToken($this->refresh_token, 'refresh_token');
+    }
 
     /**
      * Exchange an authorization code for an access token or refresh an existing token.
@@ -75,14 +94,13 @@ class Connector extends BaseConnector
      * }
      * ```
      *
-     * @param string $code The authorization code or refresh token depending on grant type
-     * @param string $grant_type Must be either 'authorization_code' or 'refresh_token'
+     * @param  string  $code  The authorization code or refresh token depending on grant type
+     * @param  string  $grant_type  Must be either 'authorization_code' or 'refresh_token'
+     * @return Response The Saloon Response object containing the token data
      *
      * @throws InvalidArgumentException When an invalid grant type is provided
      * @throws RequestException When the API request fails
      * @throws FatalRequestException When a critical request error occurs
-     *
-     * @return Response The Saloon Response object containing the token data
      *
      * @link https://developers.strava.com/docs/getting-started/ Strava API Documentation
      */
@@ -90,7 +108,7 @@ class Connector extends BaseConnector
     {
         $allowed_grant_types = ['authorization_code', 'refresh_token'];
 
-        if (!in_array($grant_type, $allowed_grant_types)) {
+        if (! in_array($grant_type, $allowed_grant_types)) {
             throw new InvalidArgumentException('Invalid grant type provided.');
         }
 
@@ -98,14 +116,16 @@ class Connector extends BaseConnector
     }
 
     /**
-     * The Base URL of the API.
+     * The base URL for the API abstracted to the config to allow for easy overriding.
      */
     public function resolveBaseUrl(): string
     {
-        return 'https://www.strava.com/api/v3';
+        return config('strava-client.base_url');
     }
 
     /**
+     * Default header setup for json.
+     *
      * @return string[]
      */
     protected function defaultHeaders(): array
@@ -116,8 +136,11 @@ class Connector extends BaseConnector
         ];
     }
 
+    /**
+     * The default authentication method for the connector.
+     */
     protected function defaultAuth(): ?TokenAuthenticator
     {
-        return $this->token ? new TokenAuthenticator($this->token) : null;
+        return $this->access_token ? new TokenAuthenticator($this->access_token) : null;
     }
 }

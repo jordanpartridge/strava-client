@@ -14,7 +14,7 @@ class AthleteActivityRequest extends Request
     protected Method $method = Method::GET;
 
     public function __construct(
-        private array $payload,
+        private readonly array $payload,
     ) {
         if(!isset($payload['page']) || !isset($payload['per_page'])) {
             throw new InvalidArgumentException('Page and per_page are required');
@@ -33,7 +33,6 @@ class AthleteActivityRequest extends Request
     {
         return [
             'page'     => $this->payload['page'],
-            'per_page' => $this->payload['per_page'],
         ];
     }
 }
