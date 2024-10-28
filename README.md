@@ -1,19 +1,17 @@
-# This is my package strava-client
+# Strava Client for Laravel
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/jordanpartridge/strava-client.svg?style=flat-square)](https://packagist.org/packages/jordanpartridge/strava-client)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/jordanpartridge/strava-client/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/jordanpartridge/strava-client/actions?query=workflow%3Arun-tests+branch%3Amain)
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/jordanpartridge/strava-client/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/jordanpartridge/strava-client/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/jordanpartridge/strava-client.svg?style=flat-square)](https://packagist.org/packages/jordanpartridge/strava-client)
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+This package provides a convenient way to interact with the Strava API in your Laravel application. It was born out of a passion for cycling and APIs, initially built into a personal website and now available as a standalone package.
 
-## Support us
+## Features
 
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/strava-client.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/strava-client)
-
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
-
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+- Easy integration with Strava API
+- Laravel-friendly configuration
+- Customizable and extendable
 
 ## Installation
 
@@ -23,56 +21,58 @@ You can install the package via composer:
 composer require jordanpartridge/strava-client
 ```
 
-You can publish and run the migrations with:
+## Configuration
+
+Publish the config file:
+
+```bash
+php artisan vendor:publish --tag="strava-client-config"
+```
+
+Optionally, you can publish and run the migrations:
 
 ```bash
 php artisan vendor:publish --tag="strava-client-migrations"
 php artisan migrate
 ```
 
-You can publish the config file with:
-
-```bash
-php artisan vendor:publish --tag="strava-client-config"
-```
-
-This is the contents of the published config file:
-
-```php
-return [
-];
-```
-
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag="strava-client-views"
-```
 
 ## Usage
 
+Here's a basic example of how to use the Strava Client:
+
 ```php
-$stravaClient = new JordanPartridge\StravaClient();
-echo $stravaClient->echoPhrase('Hello, JordanPartridge!');
+use JordanPartridge\StravaClient\StravaClient;
+
+$stravaClient = new StravaClient();
+$activities = $stravaClient->activityForAthlete(page: 1);
 ```
 
+If you would prefer to use the facade that's also available:
+
+```php
+use JordanPartridge\StravaClient\Facades\StravaClient;
+$activities = StravaClient::activitiesForAthlete(page: 1);
+
+This documentation is a work in progress, please refer to Strava's API documentation for more information.
+```
+For more detailed usage instructions and examples, please refer to the [documentation](https://github.com/jordanpartridge/strava-client/wiki).
+
 ## Testing
+
+Run the tests with:
 
 ```bash
 composer test
 ```
 
-## Changelog
-
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
-
 ## Contributing
 
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+Contributions are welcome! Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 ## Security Vulnerabilities
 
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
+If you discover any security-related issues, please email jordan@partridge.rocks instead of using the issue tracker.
 
 ## Credits
 
@@ -82,3 +82,11 @@ Please review [our security policy](../../security/policy) on how to report secu
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+
+## About the Author
+
+This package is maintained by Jordan Partridge. Check out my personal website at [jordanpartridge.us](https://jordanpartridge.us) to see how I've used this package and other projects.
+
+## Changelog
+
+Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.

@@ -2,6 +2,7 @@
 
 namespace JordanPartridge\StravaClient;
 
+use Exception;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
 
@@ -39,13 +40,11 @@ final class StravaClient
         $response = $request();
 
         if ($response->failed()) {
-            dd($response->status(), $response->json());
-
             return match ($response->status()) {
                 401 => $this->handleUnauthorized($request),
-                404 => throw new \Exception('Not Found'),
-                400 => throw new \Exception('Bad Request'),
-                default => throw new \Exception('Unknown Error'),
+                404 => throw new Exception('Not Found'),
+                400 => throw new Exception('Bad Request'),
+                default => throw new Exception('Unknown Error'),
             };
         }
 
@@ -55,11 +54,6 @@ final class StravaClient
     private function handleUnauthorized(callable $request): array
     {
         $refresh = $this->strava->refreshToken();
-        dd([
-            'status' => $refresh->status(),
-            'response' => $refresh->json(),
-        ]
-        );
 
         return $request()->json();
     }
@@ -70,7 +64,7 @@ final class StravaClient
 
         if ($response->failed()) {
             $status = $response->status();
-            throw new \Exception('Failed to get activity');
+            throw new Exception('Failed to get activity');
         }
 
         return $response->json();
