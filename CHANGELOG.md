@@ -2,6 +2,14 @@
 
 All notable changes to `strava-client` will be documented in this file.
 
+## v0.2 - 2024-10-29
+
+### What's Changed
+
+* fix to auto-refresh by @jordanpartridge in https://github.com/jordanpartridge/strava-client/pull/3
+
+**Full Changelog**: https://github.com/jordanpartridge/strava-client/compare/v0.1.1...v0.2
+
 ## v0.1.1 - 2024-10-28
 
 - Initial release
