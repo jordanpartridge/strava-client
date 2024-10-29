@@ -3,17 +3,19 @@
 namespace JordanPartridge\StravaClient;
 
 use Exception;
+use Saloon\Http\Response;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
 
 final class StravaClient
 {
-    public function __construct(private Connector $strava)
+    public function __construct(private readonly Connector $strava)
     {
-        //
     }
 
     /**
+     * Exchange authorization code for tokens
+     *
      * @throws FatalRequestException
      * @throws RequestException
      * @throws \JsonException
@@ -23,48 +25,88 @@ final class StravaClient
         return $this->strava->exchangeToken($code, $grant_type)->json();
     }
 
+    /**
+     * Set access and refresh tokens
+     */
     public function setToken(string $access_token, string $refresh_token): void
     {
         $this->strava->setToken($access_token, $refresh_token);
     }
 
-    public function activityForAthlete($page, $per_page): array
+    /**
+     * Get activities for authenticated athlete
+     *
+     * @throws Exception
+     */
+    public function activityForAthlete(int $page, int $per_page): array
     {
-        return $this->handleRequest(function () use ($page, $per_page) {
-            return $this->strava->activityForAthlete(['page' => $page, 'per_page' => $per_page]);
+        return $this->handleRequest(function () use ($page, $per_page): Response {
+            return $this->strava->activityForAthlete([
+                'page' => $page,
+                'per_page' => $per_page
+            ]);
         });
     }
 
+    /**
+     * Get a specific activity by ID
+     *
+     * @throws Exception
+     */
+    public function getActivity(int $id): array
+    {
+        return $this->handleRequest(function () use ($id): Response {
+            return $this->strava->getActivity($id);
+        });
+    }
+
+    /**
+     * Handle API request with automatic token refresh
+     *
+     * @throws Exception
+     */
     private function handleRequest(callable $request): array
     {
         $response = $request();
 
-        if ($response->failed()) {
-            return match ($response->status()) {
-                401 => $this->handleUnauthorized($request),
-                404 => throw new Exception('Not Found'),
-                400 => throw new Exception('Bad Request'),
-                default => throw new Exception('Unknown Error'),
-            };
+        if (! $response->failed()) {
+            return $response->json();
         }
 
-        return $response->json();
+        return match ($response->status()) {
+            401 => $this->handleUnauthorized($request),
+            404 => throw new Exception('Resource not found'),
+            400 => throw new Exception($response->json('message') ?? 'Bad request'),
+            429 => throw new Exception('Rate limit exceeded'),
+            500, 502, 503, 504 => throw new Exception('Strava API service error'),
+            default => throw new Exception('Unknown error occurred'),
+        };
     }
 
+    /**
+     * Handle unauthorized response by refreshing token and retrying
+     *
+     * @throws Exception
+     */
     private function handleUnauthorized(callable $request): array
     {
         $refresh = $this->strava->refreshToken();
 
-        return $request()->json();
-    }
+        if ($refresh->failed()) {
+            throw new Exception('Token refresh failed: ' . ($refresh->json('message') ?? 'Unknown error'));
+        }
 
-    public function getActivity(int $id): array
-    {
-        $response = $this->strava->getActivity($id);
+        // Update tokens after successful refresh
+        $this->strava->setToken(
+            $refresh->json('access_token'),
+            $refresh->json('refresh_token')
+        );
+
+        // Retry original request with new token
+        $response = $request();
 
         if ($response->failed()) {
-            $status = $response->status();
-            throw new Exception('Failed to get activity');
+            throw new Exception('Request failed after token refresh');
         }
 
         return $response->json();
