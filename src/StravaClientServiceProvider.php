@@ -18,7 +18,6 @@ class StravaClientServiceProvider extends PackageServiceProvider
         $package
             ->name('strava-client')
             ->hasConfigFile()
-            ->hasViews()
             ->hasMigration('create_strava_client_table')
             ->hasCommand(StravaClientCommand::class);
     }
