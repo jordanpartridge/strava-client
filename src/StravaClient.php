@@ -4,15 +4,13 @@ namespace JordanPartridge\StravaClient;
 
 use Exception;
 use JordanPartridge\StravaClient\Exceptions\ResourceNotFoundException;
-use Saloon\Http\Response;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
+use Saloon\Http\Response;
 
 final class StravaClient
 {
-    public function __construct(private readonly Connector $strava)
-    {
-    }
+    public function __construct(private readonly Connector $strava) {}
 
     /**
      * Exchange authorization code for tokens
@@ -44,7 +42,7 @@ final class StravaClient
         return $this->handleRequest(function () use ($page, $per_page): Response {
             return $this->strava->activityForAthlete([
                 'page' => $page,
-                'per_page' => $per_page
+                'per_page' => $per_page,
             ]);
         });
     }
@@ -94,7 +92,7 @@ final class StravaClient
         $refresh = $this->strava->refreshToken();
 
         if ($refresh->failed()) {
-            throw new Exception('Token refresh failed: ' . ($refresh->json('message') ?? 'Unknown error'));
+            throw new Exception('Token refresh failed: '.($refresh->json('message') ?? 'Unknown error'));
         }
 
         // Update tokens after successful refresh
