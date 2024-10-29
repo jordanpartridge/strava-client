@@ -4,6 +4,7 @@ namespace JordanPartridge\StravaClient;
 
 use Exception;
 use JordanPartridge\StravaClient\Exceptions\ResourceNotFoundException;
+use Saloon\Http\Response;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
 use Saloon\Http\Response;
@@ -74,7 +75,7 @@ final class StravaClient
 
         return match ($response->status()) {
             401 => $this->handleUnauthorized($request),
-            404 => throw new ResourceNotFoundException($response),
+            404 => throw new ResourceNotFoundException($request),
             400 => throw new Exception($response->json('message') ?? 'Bad request'),
             429 => throw new Exception('Rate limit exceeded'),
             500, 502, 503, 504 => throw new Exception('Strava API service error'),
