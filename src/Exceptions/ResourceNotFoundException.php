@@ -3,12 +3,25 @@
 namespace JordanPartridge\StravaClient\Exceptions;
 
 use Exception;
+use Saloon\Http\Response;
 
 class ResourceNotFoundException extends Exception
 {
-    public function __construct(callable $request)
+    private Response $response;
+
+    public function __construct(Response $response, ?string $message = null)
     {
-        $this->message = $request()->json()['message'];
-        parent::__construct($this->message);
+        $this->response = $response;
+        $responseMessage = $response->json('message');
+
+        parent::__construct(
+            $message ?? $responseMessage ?? 'Resource not found',
+            $response->status()
+        );
+    }
+
+    public function getResponse(): Response
+    {
+        return $this->response;
     }
 }

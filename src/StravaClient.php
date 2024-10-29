@@ -76,7 +76,7 @@ final class StravaClient
 
         return match ($response->status()) {
             401 => $this->handleUnauthorized($request),
-            404 => throw new ResourceNotFoundException($request),
+            404 => throw new ResourceNotFoundException($response),
             400 => throw new Exception($response->json('message') ?? 'Bad request'),
             429 => throw new Exception('Rate limit exceeded'),
             500, 502, 503, 504 => throw new Exception('Strava API service error'),
