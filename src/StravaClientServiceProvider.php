@@ -21,4 +21,13 @@ class StravaClientServiceProvider extends PackageServiceProvider
             ->hasMigration('create_strava_client_table')
             ->hasCommand(StravaClientCommand::class);
     }
+
+    public function packageBooted(): void
+    {
+        $this->app->bind('strava-client', function () {
+            new StravaClient(new Connector(), config('strava-client.max_refresh_attempts'));
+        });
+
+        parent::packageBooted();
+    }
 }
