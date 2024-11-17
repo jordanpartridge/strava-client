@@ -14,3 +14,4 @@ class StravaClient extends Facade
     {
         return 'strava-client';
     }
+}
