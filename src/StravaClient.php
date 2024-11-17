@@ -2,23 +2,26 @@
 
 namespace JordanPartridge\StravaClient;
 
-use Exception;
+use JordanPartridge\StravaClient\Exceptions\BadRequestException;
 use JordanPartridge\StravaClient\Exceptions\RateLimitExceededException;
+use JordanPartridge\StravaClient\Exceptions\RefreshTokenException;
 use JordanPartridge\StravaClient\Exceptions\ResourceNotFoundException;
+use JordanPartridge\StravaClient\Exceptions\StravaServiceException;
+use JsonException;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
 use Saloon\Http\Response;
 
-final class StravaClient
+final readonly class StravaClient
 {
-    public function __construct(private readonly Connector $strava) {}
+    public function __construct(private Connector $strava) {}
 
     /**
      * Exchange authorization code for tokens
      *
      * @throws FatalRequestException
      * @throws RequestException
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function exchangeToken(string $code, string $grant_type = 'authorization_code'): array
     {
@@ -36,7 +39,7 @@ final class StravaClient
     /**
      * Get activities for authenticated athlete
      *
-     * @throws Exception
+     * @throws RequestException|FatalRequestException|JsonException
      */
     public function activityForAthlete(int $page, int $per_page): array
     {
@@ -51,7 +54,15 @@ final class StravaClient
     /**
      * Get a specific activity by ID
      *
-     * @throws Exception
+     *
+     * @throws BadRequestException
+     * @throws FatalRequestException
+     * @throws JsonException
+     * @throws RateLimitExceededException
+     * @throws RefreshTokenException
+     * @throws RequestException
+     * @throws ResourceNotFoundException
+     * @throws StravaServiceException
      */
     public function getActivity(int $id): array
     {
@@ -63,7 +74,14 @@ final class StravaClient
     /**
      * Handle API request with automatic token refresh
      *
-     * @throws Exception
+     * @throws BadRequestException
+     * @throws FatalRequestException
+     * @throws JsonException
+     * @throws RateLimitExceededException
+     * @throws RefreshTokenException
+     * @throws RequestException
+     * @throws ResourceNotFoundException
+     * @throws StravaServiceException
      */
     private function handleRequest(callable $request): array
     {
@@ -76,37 +94,41 @@ final class StravaClient
         return match ($response->status()) {
             401 => $this->handleUnauthorized($request),
             404 => throw new ResourceNotFoundException($response),
-            400 => throw new Exception($response->json('message') ?? 'Bad request'),
+            400 => throw new BadRequestException($response),
             429 => throw new RateLimitExceededException($response),
-            500, 502, 503, 504 => throw new Exception('Strava API service error'),
-            default => throw new Exception('Unknown error occurred'),
+            500, 502, 503, 504 => throw new StravaServiceException($response),
+            default => throw new RequestException($response),
         };
     }
 
     /**
      * Handle unauthorized response by refreshing token and retrying
      *
-     * @throws Exception
+     *
+     * @throws FatalRequestException
+     * @throws JsonException
+     * @throws RefreshTokenException
+     * @throws RequestException
      */
     private function handleUnauthorized(callable $request): array
     {
-        $refresh = $this->strava->refreshToken();
+        $response = $this->strava->refreshToken();
 
-        if ($refresh->failed()) {
-            throw new Exception('Token refresh failed: '.($refresh->json('message') ?? 'Unknown error'));
+        if ($response->failed()) {
+            throw new RefreshTokenException($response);
         }
 
         // Update tokens after successful refresh
         $this->strava->setToken(
-            $refresh->json('access_token'),
-            $refresh->json('refresh_token')
+            $response->json('access_token'),
+            $response->json('refresh_token')
         );
 
         // Retry original request with new token
         $response = $request();
 
         if ($response->failed()) {
-            throw new Exception('Request failed after token refresh');
+            throw new RefreshTokenException($response);
         }
 
         return $response->json();

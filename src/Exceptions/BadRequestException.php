@@ -5,9 +5,9 @@ namespace JordanPartridge\StravaClient\Exceptions;
 use Saloon\Exceptions\Request\RequestException;
 use Saloon\Http\Response;
 
-class ResourceNotFoundException extends RequestException
+class BadRequestException extends RequestException
 {
-    public function __construct(Response $response, string $message = 'Resource not found')
+    public function __construct(Response $response, $message = 'Bad request')
     {
         parent::__construct($response, $message);
     }
