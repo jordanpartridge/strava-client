@@ -3,18 +3,18 @@
 namespace JordanPartridge\StravaClient;
 
 use InvalidArgumentException;
-use JordanPartridge\StravaClient\Exceptions\BadRequestException;
-use JordanPartridge\StravaClient\Exceptions\RateLimitExceededException;
-use JordanPartridge\StravaClient\Exceptions\RefreshTokenException;
-use JordanPartridge\StravaClient\Exceptions\ResourceNotFoundException;
-use JordanPartridge\StravaClient\Exceptions\StravaServiceException;
+use JordanPartridge\StravaClient\Exceptions\Authentication\MaxAttemptsException;
+use JordanPartridge\StravaClient\Exceptions\Request\BadRequestException;
+use JordanPartridge\StravaClient\Exceptions\Request\RateLimitExceededException;
+use JordanPartridge\StravaClient\Exceptions\Request\ResourceNotFoundException;
+use JordanPartridge\StravaClient\Exceptions\Request\StravaServiceException;
 use JsonException;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
 
 final readonly class StravaClient
 {
-    public function __construct(private Connector $strava, private int $max_refresh_attempts = 1)
+    public function __construct(private Connector $strava, private int $max_refresh_attempts = 3)
     {
         if ($this->max_refresh_attempts < 1) {
             throw new InvalidArgumentException('Max refresh attempts must be greater than 0.');
@@ -75,7 +75,7 @@ final readonly class StravaClient
      * @throws FatalRequestException
      * @throws JsonException
      * @throws RateLimitExceededException
-     * @throws RefreshTokenException
+     * @throws MaxAttemptsException
      * @throws RequestException
      * @throws ResourceNotFoundException
      * @throws StravaServiceException
@@ -96,7 +96,7 @@ final readonly class StravaClient
      * @throws FatalRequestException
      * @throws JsonException
      * @throws RateLimitExceededException
-     * @throws RefreshTokenException
+     * @throws MaxAttemptsException
      * @throws RequestException
      * @throws ResourceNotFoundException
      * @throws StravaServiceException
@@ -104,7 +104,7 @@ final readonly class StravaClient
     private function handleRequest(callable $request, int $attempts = 0): array
     {
         if ($attempts >= $this->max_refresh_attempts) {
-            throw new RefreshTokenException($request(), 'Maximum retry attempts exceeded');
+            throw new MaxAttemptsException('Maximum retry attempts exceeded', 403);
         }
         $response = $request();
 
@@ -128,13 +128,13 @@ final readonly class StravaClient
      *
      * @throws FatalRequestException
      * @throws JsonException
-     * @throws RefreshTokenException
+     * @throws MaxAttemptsException
      * @throws RequestException
      */
     private function handleUnauthorized(callable $request, int $attempts = 0, $failed_response = null): array
     {
         if ($attempts >= $this->max_refresh_attempts) {
-            throw new RefreshTokenException($failed_response, 'Maximum token refresh attempts exceeded');
+            throw new MaxAttemptsException('Maximum token refresh attempts exceeded', 403);
         }
         $response = $this->handleRequest(fn () => $this->strava->refreshToken());
 
