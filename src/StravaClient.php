@@ -128,7 +128,7 @@ final class StravaClient
         }
 
         return match ($response->status()) {
-            self::HTTP_UNAUTHORIZED => $this->handleUnauthorized($request, $response),
+            self::HTTP_UNAUTHORIZED => $this->handleUnauthorized($request),
             self::HTTP_NOT_FOUND => throw new ResourceNotFoundException($response),
             self::HTTP_BAD_REQUEST => throw new BadRequestException($response),
             self::HTTP_RATE_LIMIT => throw new RateLimitExceededException($response),
@@ -146,9 +146,8 @@ final class StravaClient
      * @throws MaxAttemptsException
      * @throws RequestException
      */
-    private function handleUnauthorized(callable $request, $failed_response = null): array
+    private function handleUnauthorized(callable $request): array
     {
-        $this->current_attempts++;
         if ($this->current_attempts >= $this->max_refresh_attempts) {
             throw new MaxAttemptsException('Maximum token refresh attempts exceeded', 403);
         }
