@@ -11,7 +11,6 @@ use JsonException;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
 use Saloon\Http\Response;
-use Saloon\Http\Response;
 
 final readonly class StravaClient
 {
