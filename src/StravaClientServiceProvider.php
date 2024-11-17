@@ -13,7 +13,7 @@ class StravaClientServiceProvider extends PackageServiceProvider
         /*
          * This class is a Package Service Provider
          *
-         * More info: https://github.com/spatie/laravel-package-tools
+         * More info: https:/L/github.com/spatie/laravel-package-tools
          */
         $package
             ->name('strava-client')
