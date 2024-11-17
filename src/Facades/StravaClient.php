@@ -3,7 +3,6 @@
 namespace JordanPartridge\StravaClient\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use JordanPartridge\StravaClient\StravaClient as StravaClientService;
 
 /**
  * @see \JordanPartridge\StravaClient\StravaClient

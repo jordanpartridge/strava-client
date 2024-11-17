@@ -27,7 +27,7 @@ class StravaClientServiceProvider extends PackageServiceProvider
         $this->app->bind('strava-client', function () {
             new StravaClient(
                 strava: new Connector,
-                max_refresh_attempts:  config('strava-client.max_refresh_attempts')
+                max_refresh_attempts: config('strava-client.max_refresh_attempts')
             );
         });
 
