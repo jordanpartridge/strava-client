@@ -40,11 +40,11 @@ final readonly class StravaClient
      */
     public function setToken(string $access_token, string $refresh_token): void
     {
-        if ($this->shouldSetToken($access_token, $refresh_token)) {
-            $this->strava->setToken($access_token, $refresh_token);
+        if (! $this->shouldSetToken($access_token, $refresh_token)) {
+            throw new InvalidArgumentException('Access and refresh tokens must be set');
         }
 
-        throw new InvalidArgumentException('Access and refresh tokens must be set');
+        $this->strava->setToken($access_token, $refresh_token);
     }
 
     private function shouldSetToken(string $access_token, string $refresh_token): bool
