@@ -3,6 +3,7 @@
 namespace JordanPartridge\StravaClient;
 
 use JordanPartridge\StravaClient\Commands\StravaClientCommand;
+use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -13,13 +14,18 @@ class StravaClientServiceProvider extends PackageServiceProvider
         /*
          * This class is a Package Service Provider
          *
-         * More info: https://github.com/spatie/laravel-package-tools
+         * More info: https:/L/github.com/spatie/laravel-package-tools
          */
         $package
             ->name('strava-client')
             ->hasConfigFile()
-            ->hasMigration('create_strava_client_table')
-            ->hasCommand(StravaClientCommand::class);
+            ->hasMigration('create_strava_tokens_table')
+            ->hasInstallCommand(function (InstallCommand $command) {
+                $command
+                    ->publishConfigFile()
+                    ->publishMigrations()
+                    ->askToStarRepoOnGitHub('jordanpartridge/strava-client');
+            });
     }
 
     public function packageBooted(): void
