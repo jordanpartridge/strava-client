@@ -12,13 +12,11 @@ use JsonException;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
 
-final readonly  class StravaClient
+final readonly class StravaClient
 {
     private const MAX_REFRESH_ATTEMPTS = 3;
 
-    public function __construct(private Connector $strava)
-    {
-    }
+    public function __construct(private Connector $strava) {}
 
     /**
      * Exchange authorization code for tokens
@@ -30,7 +28,7 @@ final readonly  class StravaClient
     public function exchangeToken(string $code, string $grant_type = 'authorization_code'): array
     {
         return $this->handleRequest(
-            fn() => $this->strava->exchangeToken($code, $grant_type)
+            fn () => $this->strava->exchangeToken($code, $grant_type)
         );
     }
 
@@ -55,8 +53,8 @@ final readonly  class StravaClient
     {
         return $page < 1 || $per_page < 1
             ? throw new InvalidArgumentException('Page and per_page must be positive integers')
-            : $this->handleRequest(fn() => $this->strava->activityForAthlete([
-                'page'     => $page,
+            : $this->handleRequest(fn () => $this->strava->activityForAthlete([
+                'page' => $page,
                 'per_page' => $per_page,
             ]));
     }
@@ -80,7 +78,7 @@ final readonly  class StravaClient
             ?
             throw new InvalidArgumentException('Activity ID must be positive')
             :
-            $this->handleRequest(fn() => $this->strava->getActivity($id));
+            $this->handleRequest(fn () => $this->strava->getActivity($id));
     }
 
     /**
@@ -99,7 +97,7 @@ final readonly  class StravaClient
     {
         $response = $request();
 
-        if (!$response->failed()) {
+        if (! $response->failed()) {
             return $response->json();
         }
 
@@ -127,7 +125,7 @@ final readonly  class StravaClient
         if ($attempts >= self::MAX_REFRESH_ATTEMPTS) {
             throw new RefreshTokenException($request(), 'Maximum token refresh attempts exceeded');
         }
-        $response = $this->handleRequest(fn() => $this->strava->refreshToken());
+        $response = $this->handleRequest(fn () => $this->strava->refreshToken());
 
         // Update tokens after successful refresh
         $this->strava->setToken(
