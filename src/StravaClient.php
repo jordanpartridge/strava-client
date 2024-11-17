@@ -14,8 +14,11 @@ use Saloon\Exceptions\Request\RequestException;
 
 final readonly class StravaClient
 {
-    public function __construct(private Connector $strava, private int $max_refresh_attempts = 0)
+    public function __construct(private Connector $strava, private int $max_refresh_attempts = 1)
     {
+        if ($this->max_refresh_attempts < 1) {
+            throw new InvalidArgumentException('Max refresh attempts must be greater than 0.');
+        }
     }
 
     /**
@@ -37,11 +40,16 @@ final readonly class StravaClient
      */
     public function setToken(string $access_token, string $refresh_token): void
     {
-        (empty($access_token) || empty($refresh_token))
-            ?
-            throw new InvalidArgumentException('Access token and refresh token cannot be empty')
-            :
+        if ($this->shouldSetToken($access_token, $refresh_token)) {
             $this->strava->setToken($access_token, $refresh_token);
+        }
+
+        throw new InvalidArgumentException('Access and refresh tokens must be set');
+    }
+
+    private function shouldSetToken(string $access_token, string $refresh_token): bool
+    {
+        return !empty($access_token) && !empty($refresh_token);
     }
 
     /**
