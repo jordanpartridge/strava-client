@@ -2,6 +2,14 @@
 
 All notable changes to `strava-client` will be documented in this file.
 
+## v0.2.1 - 2024-11-17
+
+### What's Changed
+
+* Custom Exceptions Added by @jordanpartridge in https://github.com/jordanpartridge/strava-client/pull/5
+
+**Full Changelog**: https://github.com/jordanpartridge/strava-client/compare/v0.2...v0.2.1
+
 ## v0.2 - 2024-10-29
 
 ### What's Changed
