@@ -11,4 +11,9 @@ class ResourceNotFoundException extends RequestException
     {
         parent::__construct($response, $message);
     }
+
+    public function getResponse(): Response
+    {
+        return $this->response;
+    }
 }
