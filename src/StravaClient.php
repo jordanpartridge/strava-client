@@ -22,7 +22,7 @@ final class StravaClient
 
     private const HTTP_RATE_LIMIT = 429;
 
-    private int $current_attempts;:w
+    private int $current_attempts;
 
     public function __construct(private Connector $strava, private int $max_refresh_attempts = 3)
     {
