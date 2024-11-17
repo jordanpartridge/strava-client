@@ -2,6 +2,7 @@
 
 namespace JordanPartridge\StravaClient;
 
+use InvalidArgumentException;
 use JordanPartridge\StravaClient\Exceptions\BadRequestException;
 use JordanPartridge\StravaClient\Exceptions\RateLimitExceededException;
 use JordanPartridge\StravaClient\Exceptions\RefreshTokenException;
@@ -10,11 +11,14 @@ use JordanPartridge\StravaClient\Exceptions\StravaServiceException;
 use JsonException;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
-use Saloon\Http\Response;
 
-final readonly class StravaClient
+final readonly  class StravaClient
 {
-    public function __construct(private Connector $strava) {}
+    private const MAX_REFRESH_ATTEMPTS = 3;
+
+    public function __construct(private Connector $strava)
+    {
+    }
 
     /**
      * Exchange authorization code for tokens
@@ -25,7 +29,9 @@ final readonly class StravaClient
      */
     public function exchangeToken(string $code, string $grant_type = 'authorization_code'): array
     {
-        return $this->strava->exchangeToken($code, $grant_type)->json();
+        return $this->handleRequest(
+            fn() => $this->strava->exchangeToken($code, $grant_type)
+        );
     }
 
     /**
@@ -33,7 +39,11 @@ final readonly class StravaClient
      */
     public function setToken(string $access_token, string $refresh_token): void
     {
-        $this->strava->setToken($access_token, $refresh_token);
+        (empty($access_token) || empty($refresh_token))
+            ?
+            throw new InvalidArgumentException('Access token and refresh token cannot be empty')
+            :
+            $this->strava->setToken($access_token, $refresh_token);
     }
 
     /**
@@ -43,12 +53,12 @@ final readonly class StravaClient
      */
     public function activityForAthlete(int $page, int $per_page): array
     {
-        return $this->handleRequest(function () use ($page, $per_page): Response {
-            return $this->strava->activityForAthlete([
-                'page' => $page,
+        return $page < 1 || $per_page < 1
+            ? throw new InvalidArgumentException('Page and per_page must be positive integers')
+            : $this->handleRequest(fn() => $this->strava->activityForAthlete([
+                'page'     => $page,
                 'per_page' => $per_page,
-            ]);
-        });
+            ]));
     }
 
     /**
@@ -66,9 +76,11 @@ final readonly class StravaClient
      */
     public function getActivity(int $id): array
     {
-        return $this->handleRequest(function () use ($id): Response {
-            return $this->strava->getActivity($id);
-        });
+        return $id < 1
+            ?
+            throw new InvalidArgumentException('Activity ID must be positive')
+            :
+            $this->handleRequest(fn() => $this->strava->getActivity($id));
     }
 
     /**
@@ -83,16 +95,16 @@ final readonly class StravaClient
      * @throws ResourceNotFoundException
      * @throws StravaServiceException
      */
-    private function handleRequest(callable $request): array
+    private function handleRequest(callable $request, int $attempts = 0): array
     {
         $response = $request();
 
-        if (! $response->failed()) {
+        if (!$response->failed()) {
             return $response->json();
         }
 
         return match ($response->status()) {
-            401 => $this->handleUnauthorized($request),
+            401 => $this->handleUnauthorized($request, $attempts + 1),
             404 => throw new ResourceNotFoundException($response),
             400 => throw new BadRequestException($response),
             429 => throw new RateLimitExceededException($response),
@@ -110,27 +122,19 @@ final readonly class StravaClient
      * @throws RefreshTokenException
      * @throws RequestException
      */
-    private function handleUnauthorized(callable $request): array
+    private function handleUnauthorized(callable $request, int $attempts = 0): array
     {
-        $response = $this->strava->refreshToken();
-
-        if ($response->failed()) {
-            throw new RefreshTokenException($response);
+        if ($attempts >= self::MAX_REFRESH_ATTEMPTS) {
+            throw new RefreshTokenException($request(), 'Maximum token refresh attempts exceeded');
         }
+        $response = $this->handleRequest(fn() => $this->strava->refreshToken());
 
         // Update tokens after successful refresh
         $this->strava->setToken(
-            $response->json('access_token'),
-            $response->json('refresh_token')
+            $response['access_token'],
+            $response['refresh_token']
         );
 
-        // Retry original request with new token
-        $response = $request();
-
-        if ($response->failed()) {
-            throw new RefreshTokenException($response);
-        }
-
-        return $response->json();
+        return $this->handleRequest($request, $attempts + 1);
     }
 }
