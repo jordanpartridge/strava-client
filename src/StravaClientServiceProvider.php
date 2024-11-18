@@ -19,6 +19,7 @@ class StravaClientServiceProvider extends PackageServiceProvider
         $package
             ->name('strava-client')
             ->hasConfigFile()
+            ->hasRoute('strava')
             ->hasMigration('create_strava_tokens_table')
             ->hasInstallCommand(function (InstallCommand $command) {
                 $command
