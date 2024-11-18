@@ -9,6 +9,6 @@ class RateLimitExceededException extends RequestException
 {
     public function __construct(Response $response, string $message = 'Rate limit exceeded')
     {
-        parent::__construct($response, $message);
+        parent::__construct(response: $response, message: $message, code: 429);
     }
 }
