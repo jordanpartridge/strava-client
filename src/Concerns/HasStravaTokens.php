@@ -3,6 +3,7 @@
 namespace JordanPartridge\StravaClient\Concerns;
 
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use JordanPartridge\StravaClient\Models\StravaToken;
 
 trait HasStravaTokens
 {

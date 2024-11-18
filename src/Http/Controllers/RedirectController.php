@@ -10,7 +10,10 @@ class RedirectController
 {
     public function __invoke(Request $request)
     {
-        $state = Str::random(16);
+        /**
+         * For more `entropy`
+         */
+        $state = Str::random(32);
 
         // Store the state data with the short key
         $stateData = [
@@ -28,6 +31,6 @@ class RedirectController
             'state' => $state,  // Add this for security
         ]);
 
-        return redirect(config('services.strava.authorize_url').'?'.$query);
+        return redirect(config('strava-client.authorize_url').'?'.$query);
     }
 }
