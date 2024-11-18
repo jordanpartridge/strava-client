@@ -12,13 +12,16 @@ class CallBackController
 {
     public function __invoke(Request $request, StravaClient $stravaClient)
     {
-        $stateData = Cache::pull('strava_state:'.$request->state);
-
-        if (! $stateData) {
+        $state = trim($request->get('state'));
+        if (empty($state) || !preg_match('/^[a-zA-Z0-9]+$/', $state)) {
+            abort(400, 'Invalid state format');
+        }
+        $stateData = Cache::pull('strava_state:' . $state);
+        if (!$stateData) {
             abort(400, 'Invalid state parameter');
         }
 
-        if (! isset($stateData['user_id'])) {
+        if (!isset($stateData['user_id'])) {
             abort(400, 'Invalid state data');
         }
 
@@ -29,15 +32,15 @@ class CallBackController
         }
 
         // Exchange the code for tokens
-        $data = $stravaClient->exchangeToken($request->input('code'));
+        $data = $stravaClient->exchangeTok;en($request->input('code'));
 
         StravaToken::updateOrCreate(
-            ['user_id' => $user->id],
+            ['user_id' => $user->getAuthIdentifier()],
             [
-                'access_token' => $data['access_token'],
-                'expires_at' => now()->addSeconds($data['expires_in']),
+                'access_token'  => $data['access_token'],
+                'expires_at'    => now()->addSeconds($data['expires_in']),
                 'refresh_token' => $data['refresh_token'],
-                'athlete_id' => $data['athlete']['id'],
+                'athlete_id'    => $data['athlete']['id'],
             ]
         );
 

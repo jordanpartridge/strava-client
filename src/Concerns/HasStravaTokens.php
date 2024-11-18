@@ -13,6 +13,9 @@ use JordanPartridge\StravaClient\Models\StravaToken;
  */
 trait HasStravaTokens
 {
+    /**
+     * @return HasOne <StravaToken, Model>
+     */
     public function stravaToken(): HasOne
     {
         return $this->hasOne(StravaToken::class);
