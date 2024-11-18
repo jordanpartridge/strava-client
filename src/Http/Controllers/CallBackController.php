@@ -18,7 +18,6 @@ class CallBackController
             abort(400, 'Invalid state parameter');
         }
 
-        try {
             if (! isset($stateData['user_id'])) {
                 abort(400, 'Invalid state data');
             }
@@ -28,8 +27,6 @@ class CallBackController
             if (! $user) {
                 abort(404, 'User not found');
             }
-
-            // Login the user
 
             // Exchange the code for tokens
             $data = $stravaClient->exchangeToken($request->input('code'));
@@ -46,10 +43,5 @@ class CallBackController
 
             // Redirect to a success page or dashboard
             return redirect('/admin')->with('success', 'Successfully connected with Strava!');
-
-        } catch (\Throwable $e) {
-            dd($e->getMessage());
-            abort(400, 'Invalid state data or authentication failed');
-        }
     }
 }
