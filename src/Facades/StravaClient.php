@@ -11,6 +11,6 @@ class StravaClient extends Facade
 {
     protected static function getFacadeAccessor(): string
     {
-        return 'strava-client';
+        return \JordanPartridge\StravaClient\StravaClient::class;
     }
 }
