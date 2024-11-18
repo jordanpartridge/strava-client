@@ -2,7 +2,7 @@
 
 namespace JordanPartridge\StravaClient;
 
-use JordanPartridge\StravaClient\Commands\StravaClientCommand;
+use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -18,14 +18,20 @@ class StravaClientServiceProvider extends PackageServiceProvider
         $package
             ->name('strava-client')
             ->hasConfigFile()
-            ->hasMigration('create_strava_client_table')
-            ->hasCommand(StravaClientCommand::class);
+            ->hasRoute('strava')
+            ->hasMigration('create_strava_tokens_table')
+            ->hasInstallCommand(function (InstallCommand $command) {
+                $command
+                    ->publishConfigFile()
+                    ->publishMigrations()
+                    ->askToStarRepoOnGitHub('jordanpartridge/strava-client');
+            });
     }
 
     public function packageBooted(): void
     {
         $this->app->bind('strava-client', function () {
-            new StravaClient(
+            return new StravaClient(
                 strava: new Connector,
                 max_refresh_attempts: config('strava-client.max_refresh_attempts')
             );
