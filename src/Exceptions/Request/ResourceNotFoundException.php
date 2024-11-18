@@ -9,6 +9,6 @@ class ResourceNotFoundException extends RequestException
 {
     public function __construct(Response $response, string $message = 'Resource not found')
     {
-        parent::__construct($response, $message);
+        parent::__construct(response: $response, message: $message, code: 404);
     }
 }

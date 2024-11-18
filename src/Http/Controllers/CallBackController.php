@@ -7,13 +7,24 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use JordanPartridge\StravaClient\Models\StravaToken;
 use JordanPartridge\StravaClient\StravaClient;
+use JsonException;
+use Saloon\Exceptions\Request\FatalRequestException;
+use Saloon\Exceptions\Request\RequestException;
 
 class CallBackController
 {
+    /**
+     * @throws FatalRequestException
+     * @throws RequestException
+     * @throws JsonException
+     */
     public function __invoke(Request $request, StravaClient $stravaClient)
     {
-        $stateData = Cache::pull('strava_state:'.$request->state);
-
+        $state = trim($request->get('state'));
+        if (empty($state) || ! preg_match('/^[a-zA-Z0-9]+$/', $state)) {
+            abort(400, 'Invalid state format');
+        }
+        $stateData = Cache::pull('strava_state:'.$state);
         if (! $stateData) {
             abort(400, 'Invalid state parameter');
         }
@@ -32,7 +43,7 @@ class CallBackController
         $data = $stravaClient->exchangeToken($request->input('code'));
 
         StravaToken::updateOrCreate(
-            ['user_id' => $user->id],
+            ['user_id' => $user->getAuthIdentifier()],
             [
                 'access_token' => $data['access_token'],
                 'expires_at' => now()->addSeconds($data['expires_in']),
@@ -42,6 +53,6 @@ class CallBackController
         );
 
         // Redirect to a success page or dashboard
-        return redirect(config('redirect_after_connect'))->with('success', 'Successfully connected with Strava!');
+        return redirect()->to(config('redirect_after_connect'))->with('success', 'Strava connected successfully');
     }
 }

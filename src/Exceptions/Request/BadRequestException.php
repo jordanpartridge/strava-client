@@ -9,6 +9,6 @@ class BadRequestException extends RequestException
 {
     public function __construct(Response $response, $message = 'Bad request')
     {
-        parent::__construct($response, $message);
+        parent::__construct(response: $response, message: $message, code: 400);
     }
 }
