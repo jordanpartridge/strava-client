@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use JordanPartridge\StravaClient\Models\StravaToken;
 
 /**
-* Provides Strava token relationship functionality.
-*
-* @mixin Model
-*/
+ * Provides Strava token relationship functionality.
+ *
+ * @mixin Model
+ */
 trait HasStravaTokens
 {
     public function stravaToken(): HasOne

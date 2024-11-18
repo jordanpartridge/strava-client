@@ -21,20 +21,20 @@ class RedirectController
 
         // Store the state data with the short key
         $stateData = [
-            'user_id'   => $request->user()->getAuthIdentifier(),
+            'user_id' => $request->user()->getAuthIdentifier(),
             'timestamp' => now()->timestamp,
         ];
 
-        Cache::put('strava_state:' . $state, $stateData, now()->addMinutes(10));
+        Cache::put('strava_state:'.$state, $stateData, now()->addMinutes(10));
 
         $query = http_build_query([
-            'client_id'     => config('strava-client.client_id'),
-            'redirect_uri'  => route('strava:callback'),
+            'client_id' => config('strava-client.client_id'),
+            'redirect_uri' => route('strava:callback'),
             'response_type' => 'code',
-            'scope'         => config('strava-client.scope'),
-            'state'         => $state,
+            'scope' => config('strava-client.scope'),
+            'state' => $state,
         ]);
 
-        return redirect(config('strava-client.authorize_url') . '?' . $query);
+        return redirect(config('strava-client.authorize_url').'?'.$query);
     }
 }
