@@ -7,9 +7,17 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use JordanPartridge\StravaClient\Models\StravaToken;
 use JordanPartridge\StravaClient\StravaClient;
+use JsonException;
+use Saloon\Exceptions\Request\FatalRequestException;
+use Saloon\Exceptions\Request\RequestException;
 
 class CallBackController
 {
+    /**
+     * @throws FatalRequestException
+     * @throws RequestException
+     * @throws JsonException
+     */
     public function __invoke(Request $request, StravaClient $stravaClient)
     {
         $state = trim($request->get('state'));
@@ -32,7 +40,7 @@ class CallBackController
         }
 
         // Exchange the code for tokens
-        $data = $stravaClient->exchangeTok;en($request->input('code'));
+        $data = $stravaClient->exchangeToken($request->input('code'));
 
         StravaToken::updateOrCreate(
             ['user_id' => $user->getAuthIdentifier()],
