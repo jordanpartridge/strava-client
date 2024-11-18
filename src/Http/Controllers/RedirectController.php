@@ -2,6 +2,7 @@
 
 namespace JordanPartridge\StravaClient\Http\Controllers;
 
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -26,10 +27,9 @@ class RedirectController
             'timestamp' => now()->timestamp,
         ];
         try {
-            if (!Cache::put('strava_state:' . $state, $stateData, now()->addMinutes(10))) {
-                throw new RuntimeException('Failed to store state in cache');
-            }
-        } catch (\Exception $e) {
+            Cache::put('strava_state:' . $state, $stateData, now()->addMinutes(10));
+
+        } catch (Exception $e) {
             Log::error('Failed to store Strava state', ['error' => $e->getMessage()]);
             throw new RuntimeException('Authentication flow initialization failed');
         }
