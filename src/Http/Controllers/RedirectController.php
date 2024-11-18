@@ -34,8 +34,6 @@ class RedirectController
             throw new RuntimeException('Authentication flow initialization failed');
         }
 
-        Cache::put('strava_state:' . $state, $stateData, now()->addMinutes(10));
-
         $query = http_build_query([
             'client_id'     => config('strava-client.client_id'),
             'redirect_uri'  => route('strava:callback'),
