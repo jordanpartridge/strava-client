@@ -2,7 +2,6 @@
 
 namespace JordanPartridge\StravaClient;
 
-use JordanPartridge\StravaClient\Commands\StravaClientCommand;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;

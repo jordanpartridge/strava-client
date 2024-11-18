@@ -11,13 +11,12 @@ class StravaToken extends Model
      */
     protected $fillable = ['access_token', 'athlete_id', 'refresh_token', 'user_id', 'expires_at'];
 
-
     /**
      * @var array <string, string>
      */
     protected $casts = [
-        'access_token'  => 'encrypted',
+        'access_token' => 'encrypted',
         'refresh_token' => 'encrypted',
-        'expires_at'    => 'datetime',
+        'expires_at' => 'datetime',
     ];
 }
