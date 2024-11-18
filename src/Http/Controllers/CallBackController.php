@@ -53,6 +53,6 @@ class CallBackController
         );
 
         // Redirect to a success page or dashboard
-        return redirect(config('redirect_after_connect'))->with('success', 'Successfully connected with Strava!');
+        return redirect(config('redirect_after_connect'));
     }
 }
