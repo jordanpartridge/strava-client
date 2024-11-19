@@ -39,10 +39,9 @@ class CallBackController
             abort(404, 'User not found');
         }
 
-        // Exchange the code for tokens
         $data = $stravaClient->exchangeToken($request->input('code'));
 
-        StravaToken::updateOrCreate(
+        StravaToken::query()->updateOrCreate(
             ['user_id' => $user->getAuthIdentifier()],
             [
                 'access_token' => $data['access_token'],
@@ -52,7 +51,6 @@ class CallBackController
             ]
         );
 
-        // Redirect to a success page or dashboard
-        return redirect()->to(config('redirect_after_connect'))->with('success', 'Strava connected successfully');
+        return redirect()->to(config('strava-client.redirect_after_connect'))->with('success', 'Strava connected successfully');
     }
 }
