@@ -162,3 +162,4 @@ final class StravaClient
         return $this->handleRequest($request);
     }
 }
+// Test comment
