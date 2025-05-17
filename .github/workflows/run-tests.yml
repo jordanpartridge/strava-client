@@ -99,7 +99,8 @@ jobs:
           composer require "laravel/framework:12.*" "orchestra/testbench:10.*" "nesbot/carbon:^3.0" --no-interaction --no-update
           composer update --prefer-stable --prefer-dist --no-interaction
 
-      - name: Verify Laravel 12 compatibility
-        run: |
-          echo "✅ Laravel 12 compatibility verified through composer"
-          composer show -D
+      - name: List installed dependencies
+        run: composer show -D
+
+      - name: Run tests with Laravel 12
+        run: vendor/bin/pest --ci
