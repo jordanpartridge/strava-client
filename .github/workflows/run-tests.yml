@@ -13,6 +13,8 @@ jobs:
   test:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 5
+    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
+    
     strategy:
       fail-fast: true
       matrix:
@@ -27,44 +29,10 @@ jobs:
           - laravel: 10.*
             testbench: 8.*
             carbon: ^2.63
-  
-  test-laravel12:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup PHP 8.3
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.3
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
-          coverage: none
-          
-      - name: Setup problem matchers
-        run: |
-          echo "::add-matcher::${{ runner.tool_cache }}/php.json"
-          echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
-      
-      - name: Update composer
-        run: composer self-update
-        
-      - name: Install dependencies for Laravel 12
-        run: |
-          composer require "laravel/framework:12.*" "orchestra/testbench:10.*" "nesbot/carbon:^3.0" --no-interaction --no-update
-          composer update --prefer-stable --prefer-dist --no-interaction
-
-      - name: Verify Laravel 12 compatibility
-        run: |
-          echo "✅ Laravel 12 compatibility verified through composer"
-          composer show -D
             
     env:
       COMPOSER_FLAGS: "--prefer-dist"
-
-    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
-
+            
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -100,3 +68,37 @@ jobs:
 
       - name: Execute tests
         run: vendor/bin/pest --ci
+  
+  test-laravel12:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    name: Laravel 12 Compatibility Check
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
+          coverage: none
+          
+      - name: Setup problem matchers
+        run: |
+          echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+          echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
+      
+      - name: Update composer
+        run: composer self-update
+        
+      - name: Install dependencies for Laravel 12
+        run: |
+          composer require "laravel/framework:12.*" "orchestra/testbench:10.*" "nesbot/carbon:^3.0" --no-interaction --no-update
+          composer update --prefer-stable --prefer-dist --no-interaction
+
+      - name: Verify Laravel 12 compatibility
+        run: |
+          echo "✅ Laravel 12 compatibility verified through composer"
+          composer show -D
