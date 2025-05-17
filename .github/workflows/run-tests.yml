@@ -105,7 +105,7 @@ jobs:
         
       - name: Install Laravel 12 dependencies
         run: |
-          composer require "laravel/framework:12.*" "orchestra/testbench:10.*" "nesbot/carbon:^3.0" "pestphp/pest:^3.8.2" "pestphp/pest-plugin-laravel:^3.2.0" --no-interaction --no-update
+          composer require "laravel/framework:12.*" "orchestra/testbench:10.*" "nesbot/carbon:^3.0" "pestphp/pest:^3.8.2" "pestphp/pest-plugin-laravel:^3.2.0" "pestphp/pest-plugin-arch:^3.1.0" --no-interaction --no-update
           composer update --prefer-stable --prefer-dist --no-interaction
 
       - name: List installed dependencies
