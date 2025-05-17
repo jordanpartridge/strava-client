@@ -127,7 +127,8 @@ composer test
 
 This package supports:
 - PHP 8.2 or higher
-- Laravel 10.x, 11.x, and 12.x
+- Laravel 10.x and 11.x
+- Laravel 12.x (composer.json compatibility included but not actively tested yet)
 - Carbon: ^2.63 (Laravel 10-11), ^3.0 (Laravel 12)
 
 ## 📝 License

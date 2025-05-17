@@ -5,11 +5,11 @@ All notable changes to `strava-client` will be documented in this file.
 ## Unreleased
 
 ### Added
-- Laravel 12 support
-- Carbon 3.x compatibility for Laravel 12
+- Laravel 12 compatibility in composer.json
+- Support for Carbon 3.x (required for Laravel 12)
 
 ### Changed
-- Updated GitHub workflow to test against Laravel 12
+- Updated workflow configuration for better stability
 
 ## v0.2.1 - 2024-11-17
 
