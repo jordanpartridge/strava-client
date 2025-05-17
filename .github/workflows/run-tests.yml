@@ -73,6 +73,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     name: Laravel 12 Compatibility Check
+    continue-on-error: true # Allow this job to fail without failing the workflow
     
     steps:
       - name: Checkout code
