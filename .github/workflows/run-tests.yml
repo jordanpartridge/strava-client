@@ -13,30 +13,23 @@ jobs:
   test:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 5
-    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
-    
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-latest]
-        php: [8.3]
+        os: [ubuntu-latest, windows-latest]
+        php: [8.3, 8.2]
         laravel: [11.*, 10.*]
-        stability: [prefer-stable]
+        stability: [prefer-lowest, prefer-stable]
         include:
           - laravel: 11.*
             testbench: 9.*
             carbon: ^2.63
-            pest: ^2.34
-            pest_laravel: ^2.3
           - laravel: 10.*
             testbench: 8.*
             carbon: ^2.63
-            pest: ^2.34
-            pest_laravel: ^2.3
-            
-    env:
-      COMPOSER_FLAGS: "--prefer-dist"
-            
+
+    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -53,93 +46,13 @@ jobs:
           echo "::add-matcher::${{ runner.tool_cache }}/php.json"
           echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.composer/cache/files
-          key: dependencies-laravel-${{ matrix.laravel }}-php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
-          
-      - name: Update composer
-        run: composer self-update
-
       - name: Install dependencies
         run: |
-          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" "nesbot/carbon:${{ matrix.carbon }}" "pestphp/pest:${{ matrix.pest }}" "pestphp/pest-plugin-laravel:${{ matrix.pest_laravel }}" --no-interaction --no-update
-          composer update --${{ matrix.stability }} ${{ env.COMPOSER_FLAGS }} --prefer-dist --no-interaction
+          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" "nesbot/carbon:${{ matrix.os == 'windows-latest' && '^^^' || '' }}${{ matrix.carbon }}" --no-interaction --no-update
+          composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
       - name: List Installed Dependencies
         run: composer show -D
 
       - name: Execute tests
         run: vendor/bin/pest --ci
-  
-  laravel12-compatibility:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    name: Laravel 12 Compatibility Check
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      
-      - name: Setup PHP 8.3
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.3
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
-          coverage: none
-          
-      - name: Create temporary Laravel 12 project
-        run: |
-          # Create a temporary directory for testing
-          mkdir -p /tmp/laravel12-test
-          cd /tmp/laravel12-test
-          
-          # Create a basic composer.json for a Laravel 12 project
-          cat > composer.json << 'EOL'
-          {
-              "name": "laravel12-test/app",
-              "description": "Test project for Laravel 12 compatibility",
-              "type": "project",
-              "require": {
-                  "php": "^8.2",
-                  "laravel/framework": "^12.0"
-              },
-              "require-dev": {
-                  "phpunit/phpunit": "^10.0"
-              },
-              "autoload": {
-                  "psr-4": {
-                      "App\\": "app/"
-                  }
-              },
-              "minimum-stability": "dev",
-              "prefer-stable": true
-          }
-          EOL
-          
-          # Install Laravel 12
-          composer install --no-interaction
-          
-          # Create local repository referencing the checked-out package
-          mkdir -p packages/jordanpartridge/strava-client
-          cp -r $GITHUB_WORKSPACE/* packages/jordanpartridge/strava-client/
-          
-          # Add repository to composer.json
-          composer config repositories.local '{"type": "path", "url": "packages/jordanpartridge/strava-client"}' --no-interaction
-          
-          # Require the package (with --no-scripts to avoid errors from missing Laravel structure)
-          composer require jordanpartridge/strava-client:@dev --no-scripts --no-interaction
-          
-      - name: Verify package installation
-        run: |
-          cd /tmp/laravel12-test
-          if [ -d "vendor/jordanpartridge/strava-client" ]; then
-              echo "✅ Laravel 12 compatibility check successful"
-              echo "The package was successfully installed in a Laravel 12 project"
-              exit 0
-          else
-              echo "❌ Laravel 12 compatibility check failed"
-              echo "The package could not be installed in a Laravel 12 project"
-              exit 1
-          fi

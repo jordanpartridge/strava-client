@@ -5,14 +5,15 @@ All notable changes to `strava-client` will be documented in this file.
 ## Unreleased
 
 ### Added
-- Laravel 12 support
-- Carbon 3.x compatibility (required for Laravel 12)
-- Pest PHP 3.x compatibility for Laravel 12 testing
+- Comprehensive documentation
+  - Directory-specific README files
+  - Technical architecture overview (ARCHITECTURE.md)
+  - Contribution guidelines (CONTRIBUTING.md)
+  - Technical debt tracking (TECHNICAL_DEBT.md)
 
 ### Changed
-- Updated GitHub Actions workflow to run tests against Laravel 12
-- Added dependency specifications for proper testing across Laravel versions
-- Improved CI build performance with dependency caching
+- Improved GitHub Actions workflow with wider test matrix
+- Enhanced test coverage with more environments
 
 ## v0.2.1 - 2024-11-17
 
