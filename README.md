@@ -123,6 +123,12 @@ Run the test suite:
 composer test
 ```
 
+## 🔄 Compatibility
+
+This package supports:
+- PHP 8.2 or higher
+- Laravel 10.x, 11.x, and 12.x
+
 ## 📝 License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
