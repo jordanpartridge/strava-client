@@ -23,7 +23,7 @@ class TestCase extends Orchestra
     protected function defineDatabaseMigrations()
     {
         // Create a simple users table for testing
-        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
+        $this->loadMigrationsFrom(__DIR__.'/database/migrations');
     }
 
     protected function getPackageProviders($app)
