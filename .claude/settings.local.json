@@ -16,7 +16,8 @@
       "Bash(./vendor/bin/pest:*)",
       "Bash(./vendor/bin/phpstan analyse:*)",
       "Bash(composer test:*)",
-      "Bash(vendor/bin/pest:*)"
+      "Bash(vendor/bin/pest:*)",
+      "Bash(mkdir:*)"
     ],
     "deny": []
   }

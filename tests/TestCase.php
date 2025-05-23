@@ -22,8 +22,8 @@ class TestCase extends Orchestra
      */
     protected function defineDatabaseMigrations()
     {
-        $this->loadLaravelMigrations();
-        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        // Create a simple users table for testing
+        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
     }
 
     protected function getPackageProviders($app)
