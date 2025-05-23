@@ -2,7 +2,6 @@
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Schema;
 use JordanPartridge\StravaClient\Concerns\HasStravaTokens;
 use JordanPartridge\StravaClient\Models\StravaToken;
 

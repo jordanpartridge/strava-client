@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Schema;
 use JordanPartridge\StravaClient\Connector;
 use JordanPartridge\StravaClient\Models\StravaToken;
 use JordanPartridge\StravaClient\StravaClient;
