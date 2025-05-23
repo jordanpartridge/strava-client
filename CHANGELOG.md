@@ -10,10 +10,12 @@ All notable changes to `strava-client` will be documented in this file.
   - Technical architecture overview (ARCHITECTURE.md)
   - Contribution guidelines (CONTRIBUTING.md)
   - Technical debt tracking (TECHNICAL_DEBT.md)
+- Laravel 12.x compatibility preparation
 
 ### Changed
 - Improved GitHub Actions workflow with wider test matrix
 - Enhanced test coverage with more environments
+- Updated composer.json constraints for future Laravel 12 support
 
 ## v0.2.1 - 2024-11-17
 

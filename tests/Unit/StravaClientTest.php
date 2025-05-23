@@ -213,6 +213,53 @@ describe('token refresh', function () {
         $this->connector->withMockClient($mockClient);
 
         expect(fn () => $client->getActivity(12345))
-            ->toThrow(MaxAttemptsException::class, 'Maximum retry attempts exceeded');
+            ->toThrow(MaxAttemptsException::class, 'Maximum token refresh attempts exceeded');
+    });
+});
+
+describe('service unavailable handling', function () {
+    beforeEach(function () {
+        $this->client->setToken('valid_token', 'refresh_token');
+    });
+
+    it('retries on 503 with exponential backoff', function () {
+        $startTime = microtime(true);
+        
+        $mockClient = new MockClient([
+            // First request returns 503
+            MockResponse::make([], 503),
+            // Second request returns 503
+            MockResponse::make([], 503),
+            // Third request succeeds
+            MockResponse::make([
+                'id' => 12345,
+                'name' => 'Morning Run',
+            ]),
+        ]);
+
+        $this->connector->withMockClient($mockClient);
+
+        $result = $this->client->getActivity(12345);
+        
+        $elapsedTime = microtime(true) - $startTime;
+
+        expect($result)->toHaveKey('name', 'Morning Run');
+        // Should have waited at least 3 seconds (1s + 2s delays)
+        expect($elapsedTime)->toBeGreaterThan(3.0);
+    });
+
+    it('throws exception after max retry attempts on 503', function () {
+        $mockClient = new MockClient([
+            // All requests return 503
+            MockResponse::make([], 503),
+            MockResponse::make([], 503),
+            MockResponse::make([], 503),
+            MockResponse::make([], 503),
+        ]);
+
+        $this->connector->withMockClient($mockClient);
+
+        expect(fn () => $this->client->getActivity(12345))
+            ->toThrow(\RuntimeException::class, 'Strava service unavailable after 4 attempts');
     });
 });

@@ -128,6 +128,7 @@ composer test
 This package supports:
 - PHP 8.2 or higher
 - Laravel 10.x and 11.x
+- Laravel 12.x (in development)
 
 ## 📝 License
 

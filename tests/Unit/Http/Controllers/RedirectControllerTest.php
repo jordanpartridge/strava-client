@@ -29,7 +29,7 @@ afterEach(function () {
 it('redirects to Strava authorization URL with correct parameters', function () {
     Cache::shouldReceive('put')
         ->once()
-        ->withArgs(function ($key, $data, $expiry) {
+        ->withArgs(function ($key, $data) {
             expect($key)->toStartWith('strava_state:');
             expect($data)->toHaveKeys(['user_id', 'timestamp']);
             expect($data['user_id'])->toBe(123);
