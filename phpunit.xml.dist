@@ -27,5 +27,17 @@
         <include>
             <directory suffix=".php">./src</directory>
         </include>
+        <exclude>
+            <file>./src/StravaClientServiceProvider.php</file>
+            <file>./src/Commands/StravaClientCommand.php</file>
+            <file>./src/Facades/StravaClient.php</file>
+        </exclude>
     </source>
+    <coverage>
+        <report>
+            <html outputDirectory="coverage-html" />
+            <text outputFile="php://stdout" />
+            <clover outputFile="coverage.xml" />
+        </report>
+    </coverage>
 </phpunit>

@@ -4,6 +4,7 @@ A thoughtfully crafted Strava API integration for Laravel developers who value c
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/jordanpartridge/strava-client.svg?style=flat-square)](https://packagist.org/packages/jordanpartridge/strava-client)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/jordanpartridge/strava-client/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/jordanpartridge/strava-client/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![Code Coverage](https://img.shields.io/codecov/c/github/jordanpartridge/strava-client?style=flat-square)](https://app.codecov.io/gh/jordanpartridge/strava-client)
 [![Total Downloads](https://img.shields.io/packagist/dt/jordanpartridge/strava-client.svg?style=flat-square)](https://packagist.org/packages/jordanpartridge/strava-client)
 
 This package reflects my belief that developer tools should be both powerful and pleasant to use. Built with Laravel best practices and a focus on developer experience.
@@ -103,6 +104,7 @@ Handle API interactions with confidence using custom exception types:
 use JordanPartridge\StravaClient\Exceptions\Request\BadRequestException;
 use JordanPartridge\StravaClient\Exceptions\Request\RateLimitExceededException;
 use JordanPartridge\StravaClient\Exceptions\Request\ResourceNotFoundException;
+use JordanPartridge\StravaClient\Exceptions\Request\StravaServiceException;
 
 try {
     $activity = StravaClient::getActivity($id);
@@ -112,8 +114,51 @@ try {
     // Handle API rate limits
 } catch (ResourceNotFoundException $e) {
     // Handle missing activities
+} catch (StravaServiceException $e) {
+    // Handle server errors (500, 502, 504)
 }
 ```
+
+### 🔄 Automatic Retry Logic
+
+The package intelligently handles temporary service outages:
+
+- **503 Service Unavailable**: Automatically retries up to 3 times with exponential backoff (1s, 2s, 4s delays)
+- **Token Expiration**: Automatically refreshes expired tokens and retries the original request
+- **Other Server Errors**: Throws `StravaServiceException` immediately for proper error handling
+
+This means your application stays resilient even when Strava experiences temporary issues.
+
+#### Production Considerations
+
+When handling 503 errors in production, consider:
+
+1. **Queue Jobs**: For non-critical operations, queue jobs with delay:
+   ```php
+   use App\Jobs\SyncStravaActivities;
+   
+   try {
+       $activities = StravaClient::activityForAthlete(1, 50);
+   } catch (\RuntimeException $e) {
+       if (str_contains($e->getMessage(), 'service unavailable')) {
+           // Retry in 15 minutes
+           SyncStravaActivities::dispatch($user)->delay(now()->addMinutes(15));
+       }
+   }
+   ```
+
+2. **User Feedback**: Inform users about temporary issues:
+   ```php
+   try {
+       $activity = StravaClient::getActivity($id);
+   } catch (\RuntimeException $e) {
+       if ($e->getCode() === 503) {
+           return back()->with('error', 'Strava is temporarily unavailable. Please try again in a few minutes.');
+       }
+   }
+   ```
+
+3. **Monitoring**: Log retry attempts for visibility into API health
 
 ## 🧪 Quality Assurance
 
@@ -128,6 +173,7 @@ composer test
 This package supports:
 - PHP 8.2 or higher
 - Laravel 10.x and 11.x
+- Laravel 12.x (in development)
 
 ## 📝 License
 

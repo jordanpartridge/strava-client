@@ -18,6 +18,6 @@ trait HasStravaTokens
      */
     public function stravaToken(): HasOne
     {
-        return $this->hasOne(StravaToken::class);
+        return $this->hasOne(StravaToken::class, 'user_id');
     }
 }

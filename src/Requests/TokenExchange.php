@@ -49,8 +49,8 @@ class TokenExchange extends Request implements HasBody
     public function defaultBody(): array
     {
         return [
-            'client_id' => config('services.strava.client_id'),
-            'client_secret' => config('services.strava.client_secret'),
+            'client_id' => config('strava-client.client_id'),
+            'client_secret' => config('strava-client.client_secret'),
             'grant_type' => $this->grant_type,
             $this->getTokenLabel() => $this->token,
         ];

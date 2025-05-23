@@ -11,7 +11,14 @@
       "Bash(gh run list:*)",
       "Bash(say:*)",
       "Bash(gh release create:*)",
-      "Bash(gh pr list:*)"
+      "Bash(gh pr list:*)",
+      "Bash(find:*)",
+      "Bash(./vendor/bin/pest:*)",
+      "Bash(./vendor/bin/phpstan analyse:*)",
+      "Bash(composer test:*)",
+      "Bash(vendor/bin/pest:*)",
+      "Bash(mkdir:*)",
+      "Bash(composer update:*)"
     ],
     "deny": []
   }

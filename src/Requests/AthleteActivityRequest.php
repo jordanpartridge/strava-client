@@ -2,7 +2,6 @@
 
 namespace JordanPartridge\StravaClient\Requests;
 
-use InvalidArgumentException;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 
@@ -15,11 +14,7 @@ class AthleteActivityRequest extends Request
 
     public function __construct(
         private readonly array $payload,
-    ) {
-        if (! isset($payload['page']) || ! isset($payload['per_page'])) {
-            throw new InvalidArgumentException('Page and per_page are required');
-        }
-    }
+    ) {}
 
     /**
      * The endpoint for the request
@@ -29,10 +24,8 @@ class AthleteActivityRequest extends Request
         return '/athlete/activities';
     }
 
-    public function resolveQuery(): array
+    protected function defaultQuery(): array
     {
-        return [
-            'page' => $this->payload['page'],
-        ];
+        return $this->payload;
     }
 }

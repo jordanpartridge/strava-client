@@ -22,6 +22,12 @@ final class StravaClient
 
     private const HTTP_RATE_LIMIT = 429;
 
+    private const HTTP_SERVICE_UNAVAILABLE = 503;
+
+    private const MAX_RETRY_ATTEMPTS = 3;
+
+    private const BASE_RETRY_DELAY = 1000; // 1 second in milliseconds
+
     private int $current_attempts;
 
     public function __construct(private Connector $strava, private int $max_refresh_attempts = 3)
@@ -115,10 +121,6 @@ final class StravaClient
      */
     private function handleRequest(callable $request): array
     {
-        $this->current_attempts++;
-        if ($this->current_attempts >= $this->max_refresh_attempts) {
-            throw new MaxAttemptsException('Maximum retry attempts exceeded', 403);
-        }
         $response = $request();
 
         if (! $response->failed()) {
@@ -132,7 +134,8 @@ final class StravaClient
             self::HTTP_NOT_FOUND => throw new ResourceNotFoundException($response),
             self::HTTP_BAD_REQUEST => throw new BadRequestException($response),
             self::HTTP_RATE_LIMIT => throw new RateLimitExceededException($response),
-            500, 502, 503, 504 => throw new StravaServiceException($response),
+            self::HTTP_SERVICE_UNAVAILABLE => $this->handleServiceUnavailable($request),
+            500, 502, 504 => throw new StravaServiceException($response),
             default => throw new RequestException($response),
         };
     }
@@ -148,6 +151,7 @@ final class StravaClient
      */
     private function handleUnauthorized(callable $request): array
     {
+        $this->current_attempts++;
         if ($this->current_attempts >= $this->max_refresh_attempts) {
             throw new MaxAttemptsException('Maximum token refresh attempts exceeded', 403);
         }
@@ -159,6 +163,44 @@ final class StravaClient
             $response['refresh_token']
         );
 
+        return $this->handleRequest($request);
+    }
+
+    /**
+     * Handle service unavailable response with exponential backoff retry
+     *
+     * @throws StravaServiceException
+     * @throws BadRequestException
+     * @throws FatalRequestException
+     * @throws JsonException
+     * @throws RateLimitExceededException
+     * @throws MaxAttemptsException
+     * @throws RequestException
+     * @throws ResourceNotFoundException
+     */
+    private function handleServiceUnavailable(callable $request, int $attempt = 1): array
+    {
+        if ($attempt > self::MAX_RETRY_ATTEMPTS) {
+            throw new \RuntimeException("Strava service unavailable after {$attempt} attempts", 503);
+        }
+
+        // Exponential backoff: 1s, 2s, 4s
+        $delay = self::BASE_RETRY_DELAY * pow(2, $attempt - 1);
+        usleep($delay * 1000); // convert to microseconds
+
+        // Call the request directly to avoid handleRequest's match statement
+        $response = $request();
+
+        if (! $response->failed()) {
+            return $response->json();
+        }
+
+        // If it's still a 503, retry with incremented attempt
+        if ($response->status() === self::HTTP_SERVICE_UNAVAILABLE) {
+            return $this->handleServiceUnavailable($request, $attempt + 1);
+        }
+
+        // Otherwise, let handleRequest deal with other error types
         return $this->handleRequest($request);
     }
 }
