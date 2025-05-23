@@ -17,6 +17,15 @@ class TestCase extends Orchestra
         );
     }
 
+    /**
+     * Define database migrations.
+     */
+    protected function defineDatabaseMigrations()
+    {
+        $this->loadLaravelMigrations();
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+    }
+
     protected function getPackageProviders($app)
     {
         return [
@@ -36,9 +45,5 @@ class TestCase extends Orchestra
         config()->set('strava-client.client_secret', 'test_client_secret');
         config()->set('strava-client.redirect_after_connect', '/dashboard');
         config()->set('strava-client.scope', 'read,activity:read_all');
-
-        // Run migrations
-        $migration = include __DIR__.'/../database/migrations/create_strava_tokens_table.php.stub';
-        $migration->up();
     }
 }
