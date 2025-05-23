@@ -224,7 +224,7 @@ describe('service unavailable handling', function () {
 
     it('retries on 503 with exponential backoff', function () {
         $startTime = microtime(true);
-        
+
         $mockClient = new MockClient([
             // First request returns 503
             MockResponse::make([], 503),
@@ -240,7 +240,7 @@ describe('service unavailable handling', function () {
         $this->connector->withMockClient($mockClient);
 
         $result = $this->client->getActivity(12345);
-        
+
         $elapsedTime = microtime(true) - $startTime;
 
         expect($result)->toHaveKey('name', 'Morning Run');

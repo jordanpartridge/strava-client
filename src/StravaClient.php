@@ -190,16 +190,16 @@ final class StravaClient
 
         // Call the request directly to avoid handleRequest's match statement
         $response = $request();
-        
-        if (!$response->failed()) {
+
+        if (! $response->failed()) {
             return $response->json();
         }
-        
+
         // If it's still a 503, retry with incremented attempt
         if ($response->status() === self::HTTP_SERVICE_UNAVAILABLE) {
             return $this->handleServiceUnavailable($request, $attempt + 1);
         }
-        
+
         // Otherwise, let handleRequest deal with other error types
         return $this->handleRequest($request);
     }
