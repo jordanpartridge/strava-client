@@ -4,6 +4,7 @@ A thoughtfully crafted Strava API integration for Laravel developers who value c
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/jordanpartridge/strava-client.svg?style=flat-square)](https://packagist.org/packages/jordanpartridge/strava-client)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/jordanpartridge/strava-client/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/jordanpartridge/strava-client/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![Code Coverage](https://img.shields.io/codecov/c/github/jordanpartridge/strava-client?style=flat-square)](https://app.codecov.io/gh/jordanpartridge/strava-client)
 [![Total Downloads](https://img.shields.io/packagist/dt/jordanpartridge/strava-client.svg?style=flat-square)](https://packagist.org/packages/jordanpartridge/strava-client)
 
 This package reflects my belief that developer tools should be both powerful and pleasant to use. Built with Laravel best practices and a focus on developer experience.

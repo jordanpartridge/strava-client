@@ -30,3 +30,6 @@ phpstan.neon
 testbench.yaml
 /docs
 /coverage
+/coverage-html
+coverage.xml
+.phpunit.result.cache
