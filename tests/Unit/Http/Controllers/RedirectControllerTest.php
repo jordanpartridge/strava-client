@@ -79,7 +79,7 @@ it('throws exception when client ID is not configured', function () {
 it('throws exception when cache operation fails', function () {
     Cache::shouldReceive('put')
         ->once()
-        ->andThrow(new Exception('Cache write failed'));
+        ->andThrow(new RuntimeException('Cache write failed'));
 
     expect(fn () => $this->controller->__invoke($this->request))
         ->toThrow(RuntimeException::class, 'Authentication flow initialization failed');
