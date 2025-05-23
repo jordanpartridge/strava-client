@@ -19,13 +19,7 @@ class TestUser extends Model
 }
 
 beforeEach(function () {
-    // Create users table for testing
-    Schema::create('users', function ($table) {
-        $table->id();
-        $table->string('name');
-        $table->string('email');
-        $table->timestamps();
-    });
+    // Users table is created via test migrations
 });
 
 it('establishes hasOne relationship with StravaToken', function () {

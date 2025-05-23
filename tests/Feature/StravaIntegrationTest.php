@@ -189,14 +189,6 @@ test('concurrent token refresh attempts', function () {
 // Helper functions
 function createTestUser()
 {
-    Schema::create('users', function ($table) {
-        $table->id();
-        $table->string('name');
-        $table->string('email');
-        $table->string('password')->nullable();
-        $table->timestamps();
-    });
-
     // Create a basic User model for testing
     $user = new class extends \Illuminate\Database\Eloquent\Model implements \Illuminate\Contracts\Auth\Authenticatable
     {
