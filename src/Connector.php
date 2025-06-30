@@ -6,6 +6,9 @@ use InvalidArgumentException;
 use JordanPartridge\StravaClient\Requests\ActivityRequest;
 use JordanPartridge\StravaClient\Requests\AthleteActivityRequest;
 use JordanPartridge\StravaClient\Requests\TokenExchange;
+use JordanPartridge\StravaClient\Requests\Webhooks\CreateSubscriptionRequest;
+use JordanPartridge\StravaClient\Requests\Webhooks\DeleteSubscriptionRequest;
+use JordanPartridge\StravaClient\Requests\Webhooks\ViewSubscriptionRequest;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
 use Saloon\Http\Auth\TokenAuthenticator;
@@ -113,6 +116,39 @@ class Connector extends BaseConnector
         }
 
         return $this->send(new TokenExchange($code, $grant_type));
+    }
+
+    /**
+     * Create a new webhook subscription.
+     *
+     * @throws FatalRequestException
+     * @throws RequestException
+     */
+    public function createWebhookSubscription(string $callbackUrl, string $verifyToken): Response
+    {
+        return $this->send(new CreateSubscriptionRequest($callbackUrl, $verifyToken));
+    }
+
+    /**
+     * Delete a webhook subscription.
+     *
+     * @throws FatalRequestException
+     * @throws RequestException
+     */
+    public function deleteWebhookSubscription(int $subscriptionId): Response
+    {
+        return $this->send(new DeleteSubscriptionRequest($subscriptionId));
+    }
+
+    /**
+     * View current webhook subscriptions.
+     *
+     * @throws FatalRequestException
+     * @throws RequestException
+     */
+    public function viewWebhookSubscriptions(): Response
+    {
+        return $this->send(new ViewSubscriptionRequest());
     }
 
     /**

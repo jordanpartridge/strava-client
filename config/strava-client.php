@@ -35,4 +35,15 @@ return [
     'scope' => env('STRAVA_CLIENT_SCOPE', 'read,activity:read_all'),
     'max_refresh_attempts' => env('STRAVA_CLIENT_MAX_REFRESH_ATTEMPTS', 3),
     'redirect_after_connect' => env('STRAVA_CLIENT_REDIRECT_AFTER_CONNECT', '/admin'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Webhook Configuration
+    |--------------------------------------------------------------------------
+    */
+    'webhook' => [
+        'callback_url' => env('STRAVA_WEBHOOK_CALLBACK_URL', ''),
+        'verify_token' => env('STRAVA_WEBHOOK_VERIFY_TOKEN', ''),
+        'endpoint' => env('STRAVA_WEBHOOK_ENDPOINT', '/strava/webhook'),
+    ],
 ];

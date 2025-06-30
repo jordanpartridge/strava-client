@@ -18,7 +18,14 @@
       "Bash(composer test:*)",
       "Bash(vendor/bin/pest:*)",
       "Bash(mkdir:*)",
-      "Bash(composer update:*)"
+      "Bash(composer update:*)",
+      "Bash(gh issue list:*)",
+      "Bash(gh api:*)",
+      "Bash(composer:*)",
+      "Bash(gh pr merge:*)",
+      "Bash(gh issue close:*)",
+      "Bash(gh issue create:*)",
+      "Bash(gh issue view:*)"
     ],
     "deny": []
   }
