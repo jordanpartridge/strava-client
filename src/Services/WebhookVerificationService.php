@@ -12,7 +12,7 @@ class WebhookVerificationService
         // Instead, they rely on the verify_token for initial subscription verification
         // and HTTPS for ongoing security. This method exists for future extensibility
         // if Strava adds signature verification or for custom verification logic.
-        
+
         return true;
     }
 }

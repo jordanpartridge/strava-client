@@ -48,7 +48,7 @@ readonly class WebhookEventData
 
     public function isDeauthorization(): bool
     {
-        return $this->aspect_type === 'update' && $this->object_type === 'athlete' && 
+        return $this->aspect_type === 'update' && $this->object_type === 'athlete' &&
                isset($this->updates['authorized']) && $this->updates['authorized'] === 'false';
     }
 

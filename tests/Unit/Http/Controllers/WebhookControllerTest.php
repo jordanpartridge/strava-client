@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use JordanPartridge\StravaClient\Events\ActivityCreated;
 use JordanPartridge\StravaClient\Events\ActivityDeleted;
 use JordanPartridge\StravaClient\Events\ActivityUpdated;
@@ -12,7 +11,7 @@ use JordanPartridge\StravaClient\Services\WebhookVerificationService;
 beforeEach(function () {
     $this->verificationService = Mockery::mock(WebhookVerificationService::class);
     $this->controller = new WebhookController($this->verificationService);
-    
+
     config(['strava-client.webhook.verify_token' => 'test-verify-token']);
 });
 
@@ -40,7 +39,7 @@ it('aborts verification with invalid token', function () {
 
 it('processes activity created webhook', function () {
     Event::fake();
-    
+
     $this->verificationService->shouldReceive('verify')->once()->andReturn(true);
 
     $request = Request::create('/webhook', 'POST', [], [], [], [], json_encode([
@@ -57,13 +56,13 @@ it('processes activity created webhook', function () {
 
     expect($response->getStatusCode())->toBe(200);
     expect($response->getData(true))->toBe(['status' => 'success']);
-    
+
     Event::assertDispatched(ActivityCreated::class);
 });
 
 it('processes activity updated webhook', function () {
     Event::fake();
-    
+
     $this->verificationService->shouldReceive('verify')->once()->andReturn(true);
 
     $request = Request::create('/webhook', 'POST', [], [], [], [], json_encode([
@@ -85,7 +84,7 @@ it('processes activity updated webhook', function () {
 
 it('processes activity deleted webhook', function () {
     Event::fake();
-    
+
     $this->verificationService->shouldReceive('verify')->once()->andReturn(true);
 
     $request = Request::create('/webhook', 'POST', [], [], [], [], json_encode([
@@ -106,7 +105,7 @@ it('processes activity deleted webhook', function () {
 
 it('processes athlete deauthorization webhook', function () {
     Event::fake();
-    
+
     $this->verificationService->shouldReceive('verify')->once()->andReturn(true);
 
     $request = Request::create('/webhook', 'POST', [], [], [], [], json_encode([

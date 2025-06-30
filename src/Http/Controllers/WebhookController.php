@@ -28,13 +28,13 @@ class WebhookController extends Controller
         }
 
         // Verify webhook signature
-        if (!$this->verificationService->verify($request)) {
+        if (! $this->verificationService->verify($request)) {
             throw new InvalidWebhookSignatureException('Invalid webhook signature');
         }
 
         // Process webhook event
         $eventData = WebhookEventData::fromArray($request->all());
-        
+
         $this->dispatchEvent($eventData);
 
         return response()->json(['status' => 'success']);
@@ -56,10 +56,11 @@ class WebhookController extends Controller
     {
         if ($event->isDeauthorization()) {
             AthleteDeauthorized::dispatch($event);
+
             return;
         }
 
-        if (!$event->isActivityEvent()) {
+        if (! $event->isActivityEvent()) {
             return;
         }
 

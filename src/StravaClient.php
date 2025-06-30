@@ -3,12 +3,12 @@
 namespace JordanPartridge\StravaClient;
 
 use InvalidArgumentException;
+use JordanPartridge\StravaClient\Data\Webhooks\SubscriptionData;
 use JordanPartridge\StravaClient\Exceptions\Authentication\MaxAttemptsException;
 use JordanPartridge\StravaClient\Exceptions\Request\BadRequestException;
 use JordanPartridge\StravaClient\Exceptions\Request\RateLimitExceededException;
 use JordanPartridge\StravaClient\Exceptions\Request\ResourceNotFoundException;
 use JordanPartridge\StravaClient\Exceptions\Request\StravaServiceException;
-use JordanPartridge\StravaClient\Data\Webhooks\SubscriptionData;
 use JsonException;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
@@ -244,6 +244,7 @@ final class StravaClient
      * View current webhook subscriptions.
      *
      * @return SubscriptionData[]
+     *
      * @throws FatalRequestException
      * @throws RequestException
      * @throws JsonException

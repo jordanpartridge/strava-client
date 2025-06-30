@@ -148,7 +148,7 @@ class Connector extends BaseConnector
      */
     public function viewWebhookSubscriptions(): Response
     {
-        return $this->send(new ViewSubscriptionRequest());
+        return $this->send(new ViewSubscriptionRequest);
     }
 
     /**
