@@ -15,23 +15,23 @@ beforeEach(function () {
 describe('Resource Access', function () {
     it('provides activity resource', function () {
         $resource = $this->client->activities();
-        
+
         expect($resource)->toBeInstanceOf(ActivityResource::class);
-        
+
         // Ensure same instance is returned (cached)
         expect($this->client->activities())->toBe($resource);
     });
 
     it('provides athlete resource', function () {
         $resource = $this->client->athlete();
-        
+
         expect($resource)->toBeInstanceOf(AthleteResource::class);
         expect($this->client->athlete())->toBe($resource);
     });
 
     it('provides webhook resource', function () {
         $resource = $this->client->webhooks();
-        
+
         expect($resource)->toBeInstanceOf(WebhookResource::class);
         expect($this->client->webhooks())->toBe($resource);
     });

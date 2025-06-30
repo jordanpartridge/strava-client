@@ -8,7 +8,7 @@ use Saloon\Http\Response;
 beforeEach(function () {
     $this->connector = Mockery::mock(Connector::class);
     $this->resource = new WebhookResource($this->connector);
-    
+
     config([
         'strava-client.webhook.callback_url' => 'https://example.com/webhook',
         'strava-client.webhook.verify_token' => 'test-token',

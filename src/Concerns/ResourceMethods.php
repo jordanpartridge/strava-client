@@ -8,7 +8,7 @@ use JordanPartridge\StravaClient\Resources\WebhookResource;
 
 /**
  * Resource Methods Trait
- * 
+ *
  * Provides the modern resource-based API for Strava integration.
  * Resources are lazy-loaded and cached for optimal performance.
  */
@@ -23,8 +23,6 @@ trait ResourceMethods
 
     /**
      * Access activity-related operations.
-     *
-     * @return ActivityResource
      */
     public function activities(): ActivityResource
     {
@@ -36,8 +34,6 @@ trait ResourceMethods
 
     /**
      * Access athlete-related operations.
-     *
-     * @return AthleteResource
      */
     public function athlete(): AthleteResource
     {
@@ -49,8 +45,6 @@ trait ResourceMethods
 
     /**
      * Access webhook-related operations.
-     *
-     * @return WebhookResource
      */
     public function webhooks(): WebhookResource
     {
@@ -62,10 +56,6 @@ trait ResourceMethods
 
     /**
      * Set authentication tokens for all resources.
-     *
-     * @param string $accessToken
-     * @param string $refreshToken
-     * @return self
      */
     public function withTokens(string $accessToken, string $refreshToken): self
     {
@@ -81,10 +71,8 @@ trait ResourceMethods
 
     /**
      * Clear the resource cache.
-     * 
-     * Useful when changing authentication context.
      *
-     * @return self
+     * Useful when changing authentication context.
      */
     public function clearResourceCache(): self
     {

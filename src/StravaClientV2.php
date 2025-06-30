@@ -12,7 +12,7 @@ use Saloon\Exceptions\Request\RequestException;
 
 /**
  * Modern Strava Client with Dual Interface Architecture
- * 
+ *
  * Provides both legacy and resource-based APIs for maximum compatibility
  * during the transition period. This class will become the main StravaClient
  * in v1.0.0, with legacy methods removed.
@@ -34,9 +34,6 @@ class StravaClientV2 implements StravaClientInterface
     /**
      * Exchange authorization code for tokens.
      *
-     * @param string $code
-     * @param string $grant_type
-     * @return array
      * @throws FatalRequestException
      * @throws RequestException
      * @throws JsonException
@@ -49,15 +46,11 @@ class StravaClientV2 implements StravaClientInterface
             return $response->json();
         }
 
-        throw new \RuntimeException('Failed to exchange token: ' . $response->status(), $response->status());
+        throw new \RuntimeException('Failed to exchange token: '.$response->status(), $response->status());
     }
 
     /**
      * Set authentication tokens (legacy interface).
-     *
-     * @param string $access_token
-     * @param string $refresh_token
-     * @return self
      */
     public function setToken(string $access_token, string $refresh_token): self
     {

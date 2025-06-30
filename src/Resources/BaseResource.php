@@ -16,18 +16,24 @@ use Saloon\Exceptions\Request\RequestException;
 
 /**
  * Base Resource Class
- * 
+ *
  * Provides shared functionality for all Strava API resources including
  * error handling, request processing, and token management.
  */
 abstract class BaseResource
 {
     private const HTTP_UNAUTHORIZED = 401;
+
     private const HTTP_NOT_FOUND = 404;
+
     private const HTTP_BAD_REQUEST = 400;
+
     private const HTTP_RATE_LIMIT = 429;
+
     private const HTTP_SERVICE_UNAVAILABLE = 503;
+
     private const MAX_RETRY_ATTEMPTS = 3;
+
     private const BASE_RETRY_DELAY = 1000; // 1 second in milliseconds
 
     private int $currentAttempts = 0;
@@ -44,8 +50,6 @@ abstract class BaseResource
     /**
      * Handle API requests with comprehensive error handling and token refresh logic.
      *
-     * @param callable $request
-     * @return array
      * @throws BadRequestException
      * @throws FatalRequestException
      * @throws JsonException
@@ -61,6 +65,7 @@ abstract class BaseResource
 
         if ($response->successful()) {
             $this->currentAttempts = 0;
+
             return $response->json();
         }
 
@@ -77,8 +82,6 @@ abstract class BaseResource
     /**
      * Handle unauthorized responses by refreshing tokens and retrying.
      *
-     * @param callable $request
-     * @return array
      * @throws FatalRequestException
      * @throws JsonException
      * @throws MaxAttemptsException
@@ -91,11 +94,11 @@ abstract class BaseResource
     private function handleUnauthorized(callable $request): array
     {
         $this->currentAttempts++;
-        
+
         if ($this->currentAttempts >= $this->maxRefreshAttempts) {
             throw new MaxAttemptsException('Maximum token refresh attempts exceeded', 403);
         }
-        
+
         $response = $this->handleRequest(fn () => $this->connector->refreshToken());
 
         // Update tokens after successful refresh
@@ -110,9 +113,6 @@ abstract class BaseResource
     /**
      * Handle service unavailable response with exponential backoff retry.
      *
-     * @param callable $request
-     * @param int $attempt
-     * @return array
      * @throws RuntimeException
      * @throws BadRequestException
      * @throws FatalRequestException
@@ -135,7 +135,7 @@ abstract class BaseResource
         // Call the request directly to avoid handleRequest's match statement
         $response = $request();
 
-        if (!$response->failed()) {
+        if (! $response->failed()) {
             return $response->json();
         }
 
@@ -150,15 +150,11 @@ abstract class BaseResource
 
     /**
      * Set authentication tokens for the connector.
-     *
-     * @param string $accessToken
-     * @param string $refreshToken
-     * @return self
      */
     public function withTokens(string $accessToken, string $refreshToken): self
     {
         $this->connector->setToken($accessToken, $refreshToken);
-        
+
         return $this;
     }
 }

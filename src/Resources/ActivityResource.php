@@ -8,7 +8,7 @@ use Saloon\Exceptions\Request\RequestException;
 
 /**
  * Activity Resource
- * 
+ *
  * Provides a clean, type-safe interface for activity-related operations.
  */
 class ActivityResource extends BaseResource
@@ -16,8 +16,9 @@ class ActivityResource extends BaseResource
     /**
      * List activities for the authenticated athlete.
      *
-     * @param array $params Query parameters (page, per_page, before, after)
+     * @param  array  $params  Query parameters (page, per_page, before, after)
      * @return array Current implementation returns array - will be ActivityCollection in future
+     *
      * @throws FatalRequestException
      * @throws RequestException
      * @throws JsonException
@@ -32,8 +33,9 @@ class ActivityResource extends BaseResource
     /**
      * Get a specific activity by ID.
      *
-     * @param int $id The activity ID
+     * @param  int  $id  The activity ID
      * @return array Current implementation returns array - will be ActivityData in future
+     *
      * @throws FatalRequestException
      * @throws RequestException
      * @throws JsonException

@@ -4,7 +4,7 @@ namespace JordanPartridge\StravaClient\Resources;
 
 /**
  * Athlete Resource
- * 
+ *
  * Provides a clean, type-safe interface for athlete-related operations.
  * Currently a placeholder for future implementation.
  */

@@ -6,21 +6,18 @@ use JordanPartridge\StravaClient\Data\Webhooks\SubscriptionData;
 
 /**
  * Legacy Methods Trait
- * 
+ *
  * Provides backward compatibility for the original StravaClient API.
  * These methods delegate to the new resource-based architecture internally.
- * 
+ *
  * @deprecated Will be removed in v1.0.0. Use the resource-based API instead.
  */
 trait LegacyMethods
 {
     /**
      * Get activities for authenticated athlete.
-     * 
-     * @deprecated Use $client->activities()->list($params) instead.
      *
-     * @param array $params
-     * @return array
+     * @deprecated Use $client->activities()->list($params) instead.
      */
     public function activityForAthlete(array $params = []): array
     {
@@ -29,11 +26,8 @@ trait LegacyMethods
 
     /**
      * Get a specific activity by ID.
-     * 
-     * @deprecated Use $client->activities()->get($id) instead.
      *
-     * @param int $id
-     * @return array
+     * @deprecated Use $client->activities()->get($id) instead.
      */
     public function getActivity(int $id): array
     {
@@ -42,12 +36,8 @@ trait LegacyMethods
 
     /**
      * Create a webhook subscription.
-     * 
-     * @deprecated Use $client->webhooks()->create($callbackUrl, $verifyToken) instead.
      *
-     * @param string|null $callbackUrl
-     * @param string|null $verifyToken
-     * @return SubscriptionData
+     * @deprecated Use $client->webhooks()->create($callbackUrl, $verifyToken) instead.
      */
     public function createWebhookSubscription(?string $callbackUrl = null, ?string $verifyToken = null): SubscriptionData
     {
@@ -56,11 +46,8 @@ trait LegacyMethods
 
     /**
      * Delete a webhook subscription.
-     * 
-     * @deprecated Use $client->webhooks()->delete($subscriptionId) instead.
      *
-     * @param int $subscriptionId
-     * @return bool
+     * @deprecated Use $client->webhooks()->delete($subscriptionId) instead.
      */
     public function deleteWebhookSubscription(int $subscriptionId): bool
     {
@@ -69,7 +56,7 @@ trait LegacyMethods
 
     /**
      * View current webhook subscriptions.
-     * 
+     *
      * @deprecated Use $client->webhooks()->list() instead.
      *
      * @return SubscriptionData[]

@@ -10,7 +10,7 @@ use Saloon\Exceptions\Request\RequestException;
 
 /**
  * Webhook Resource
- * 
+ *
  * Provides a clean, type-safe interface for managing Strava webhook subscriptions.
  */
 class WebhookResource extends BaseResource
@@ -18,9 +18,9 @@ class WebhookResource extends BaseResource
     /**
      * Create a new webhook subscription.
      *
-     * @param string|null $callbackUrl The URL that will receive webhook events
-     * @param string|null $verifyToken Token used for webhook verification
-     * @return SubscriptionData
+     * @param  string|null  $callbackUrl  The URL that will receive webhook events
+     * @param  string|null  $verifyToken  Token used for webhook verification
+     *
      * @throws InvalidArgumentException
      * @throws FatalRequestException
      * @throws RequestException
@@ -45,8 +45,8 @@ class WebhookResource extends BaseResource
     /**
      * Delete a webhook subscription.
      *
-     * @param int $subscriptionId The ID of the subscription to delete
-     * @return bool
+     * @param  int  $subscriptionId  The ID of the subscription to delete
+     *
      * @throws FatalRequestException
      * @throws RequestException
      * @throws JsonException
@@ -64,6 +64,7 @@ class WebhookResource extends BaseResource
      * List all current webhook subscriptions.
      *
      * @return SubscriptionData[]
+     *
      * @throws FatalRequestException
      * @throws RequestException
      * @throws JsonException
@@ -82,12 +83,10 @@ class WebhookResource extends BaseResource
 
     /**
      * Get a specific webhook subscription by ID.
-     * 
+     *
      * Note: Strava API doesn't provide individual subscription lookup,
      * so this method filters the list of all subscriptions.
      *
-     * @param int $subscriptionId
-     * @return SubscriptionData|null
      * @throws FatalRequestException
      * @throws RequestException
      * @throws JsonException
@@ -108,7 +107,6 @@ class WebhookResource extends BaseResource
     /**
      * Check if any webhook subscriptions exist.
      *
-     * @return bool
      * @throws FatalRequestException
      * @throws RequestException
      * @throws JsonException
@@ -121,7 +119,6 @@ class WebhookResource extends BaseResource
     /**
      * Get the first (and typically only) webhook subscription.
      *
-     * @return SubscriptionData|null
      * @throws FatalRequestException
      * @throws RequestException
      * @throws JsonException

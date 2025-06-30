@@ -2,18 +2,18 @@
 
 /**
  * Dual API Demo
- * 
+ *
  * This demonstrates both the legacy and modern resource-based APIs
  * working side by side during the transition period.
  */
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__.'/../vendor/autoload.php';
 
 use JordanPartridge\StravaClient\Connector;
 use JordanPartridge\StravaClient\StravaClientV2;
 
 // Initialize the client
-$connector = new Connector();
+$connector = new Connector;
 $client = new StravaClientV2($connector);
 
 // Set authentication tokens
