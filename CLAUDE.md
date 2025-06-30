@@ -15,6 +15,9 @@ composer install
 # Run tests
 composer test
 
+# Run tests with coverage
+composer test-coverage
+
 # Static analysis
 composer analyse
 
@@ -29,6 +32,15 @@ composer build
 
 # Clear workbench
 composer clear
+
+# Run a specific test
+vendor/bin/pest tests/Unit/StravaClientTest.php
+
+# Run tests in a specific directory
+vendor/bin/pest tests/Feature/
+
+# Run architecture tests
+vendor/bin/pest --filter="arch"
 ```
 
 ## Core Architecture
@@ -88,11 +100,25 @@ When implementing changes:
 
 ## Testing Approach
 
-Tests are written using Pest PHP:
+Tests are written using Pest PHP and organized in a structured hierarchy:
 
-1. Unit tests for individual components
-2. Integration tests for the full authentication flow
-3. HTTP mock tests using Saloon testing helpers
+1. **Unit Tests** (`tests/Unit/`): Individual component testing
+   - Models, concerns, requests, and service classes
+   - HTTP controllers with mocked dependencies
+2. **Feature Tests** (`tests/Feature/`): Full integration testing
+   - Complete OAuth flow testing
+   - End-to-end API interaction scenarios
+3. **Architecture Tests** (`tests/ArchTest.php`): Code quality enforcement
+   - Ensures proper class organization and dependencies
+4. **HTTP Mock Tests**: Using Saloon's testing helpers for API simulation
+
+## Workbench Development
+
+The package uses Laravel's Testbench Workbench for development:
+
+- **Workbench App** (`workbench/app/`): Simulated Laravel application for testing
+- **Database Migrations** (`tests/database/migrations/`): Test-specific database schema
+- **Service Provider** automatically loaded for testing environment
 
 ## Code Style
 
@@ -100,3 +126,66 @@ Tests are written using Pest PHP:
 - Static analysis via Larastan/PHPStan (level 8)
 - DocBlocks for all public methods
 - Type hints for parameters and return types
+
+## Package Structure
+
+- **Commands**: Artisan commands for package installation and management
+- **HTTP Layer**: Controllers for OAuth flow (`RedirectController`, `CallBackController`)
+- **Requests**: Saloon request classes for different API endpoints
+- **Models**: Eloquent models with encrypted token storage
+- **Exceptions**: Custom exception hierarchy for different error scenarios
+
+## Development Tools & MCP Usage
+
+### GitHub Operations
+Use GitHub CLI for all GitHub-related operations until Conduit becomes more stable and feature-rich:
+
+```bash
+# View repository status and issues
+gh repo view --web
+gh issue list
+gh pr list --state open
+
+# Create and manage pull requests
+gh pr create --title "Add new feature" --body "Description of changes"
+gh pr view 123
+gh pr checkout 123
+gh pr merge 123
+
+# Work with releases
+gh release list
+gh release create v1.0.0 --title "Release v1.0.0" --notes "Release notes"
+
+# Repository insights
+gh api repos/:owner/:repo/pulls/123/files
+gh api repos/:owner/:repo/actions/runs
+```
+
+### Efficient MCP Patterns
+
+1. **Batch Operations**: When working with multiple files or operations, batch tool calls together for optimal performance
+2. **GitHub CLI over Web**: Prefer `gh` commands for repository operations, issue management, and CI/CD insights
+3. **JSON Processing**: Use `gh` with `--json` flag and `jq` for structured data processing:
+   ```bash
+   gh pr list --json number,title,state --jq '.[] | select(.state=="OPEN")'
+   ```
+
+### Development Workflow Integration
+
+```bash
+# Quick development cycle
+composer test && composer analyse && composer format
+
+# Pre-commit workflow
+composer test && gh pr create
+# Use CI wait time for repository maintenance
+gh issue list --state open  # Review open issues
+gh pr list --state open     # Check other PRs needing attention
+gh pr checkout <pr-number> && git rebase main  # Rebase stale PRs if needed
+# Close completed issues, review stale PRs, update documentation
+gh pr checks && gh pr merge  # Verify checks pass before merging
+
+# Release workflow
+composer test-coverage  # Ensure coverage before release
+gh release create --generate-notes
+```

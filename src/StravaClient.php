@@ -3,6 +3,7 @@
 namespace JordanPartridge\StravaClient;
 
 use InvalidArgumentException;
+use JordanPartridge\StravaClient\Data\Webhooks\SubscriptionData;
 use JordanPartridge\StravaClient\Exceptions\Authentication\MaxAttemptsException;
 use JordanPartridge\StravaClient\Exceptions\Request\BadRequestException;
 use JordanPartridge\StravaClient\Exceptions\Request\RateLimitExceededException;
@@ -203,5 +204,58 @@ final class StravaClient
         // Otherwise, let handleRequest deal with other error types
         return $this->handleRequest($request);
     }
+
+    /**
+     * Create a webhook subscription for the authenticated application.
+     *
+     * @throws FatalRequestException
+     * @throws RequestException
+     * @throws JsonException
+     */
+    public function createWebhookSubscription(?string $callbackUrl = null, ?string $verifyToken = null): SubscriptionData
+    {
+        $callbackUrl ??= config('strava-client.webhook.callback_url');
+        $verifyToken ??= config('strava-client.webhook.verify_token');
+
+        if (empty($callbackUrl) || empty($verifyToken)) {
+            throw new InvalidArgumentException('Callback URL and verify token are required for webhook subscription');
+        }
+
+        $response = $this->handleRequest(fn () => $this->strava->createWebhookSubscription($callbackUrl, $verifyToken));
+
+        return SubscriptionData::fromArray($response);
+    }
+
+    /**
+     * Delete a webhook subscription.
+     *
+     * @throws FatalRequestException
+     * @throws RequestException
+     * @throws JsonException
+     */
+    public function deleteWebhookSubscription(int $subscriptionId): bool
+    {
+        $this->handleRequest(fn () => $this->strava->deleteWebhookSubscription($subscriptionId));
+
+        return true;
+    }
+
+    /**
+     * View current webhook subscriptions.
+     *
+     * @return SubscriptionData[]
+     *
+     * @throws FatalRequestException
+     * @throws RequestException
+     * @throws JsonException
+     */
+    public function viewWebhookSubscriptions(): array
+    {
+        $response = $this->handleRequest(fn () => $this->strava->viewWebhookSubscriptions());
+
+        return array_map(
+            fn (array $subscription) => SubscriptionData::fromArray($subscription),
+            $response
+        );
+    }
 }
-// Test comment

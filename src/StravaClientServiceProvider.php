@@ -2,6 +2,7 @@
 
 namespace JordanPartridge\StravaClient;
 
+use JordanPartridge\StravaClient\Services\WebhookVerificationService;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -36,6 +37,8 @@ class StravaClientServiceProvider extends PackageServiceProvider
                 max_refresh_attempts: config('strava-client.max_refresh_attempts')
             );
         });
+
+        $this->app->singleton(WebhookVerificationService::class);
 
         parent::packageBooted();
     }
