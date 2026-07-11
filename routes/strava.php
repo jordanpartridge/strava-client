@@ -9,7 +9,7 @@ Route::prefix('strava')
     ->as('strava:')
     ->middleware(['web', config('auth.defaults.guard')])->group(function () {
         Route::get('redirect', RedirectController::class)->name('redirect');
-        Route::get('callback', CallbackController::class)->name('callback');
+        Route::get('callback', CallBackController::class)->name('callback');
     });
 
 // Webhook route - separate from authenticated routes

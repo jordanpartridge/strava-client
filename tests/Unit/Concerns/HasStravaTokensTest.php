@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use JordanPartridge\StravaClient\Concerns\HasStravaTokens;
 use JordanPartridge\StravaClient\Models\StravaToken;
@@ -25,7 +26,7 @@ it('establishes hasOne relationship with StravaToken', function () {
     $user = new TestUser;
     $relation = $user->stravaToken();
 
-    expect($relation)->toBeInstanceOf(\Illuminate\Database\Eloquent\Relations\HasOne::class);
+    expect($relation)->toBeInstanceOf(HasOne::class);
     expect($relation->getRelated())->toBeInstanceOf(StravaToken::class);
 });
 

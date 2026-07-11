@@ -1,5 +1,6 @@
 <?php
 
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use JordanPartridge\StravaClient\Models\StravaToken;
 
@@ -38,7 +39,7 @@ it('can create token with all attributes', function () {
     expect($token)->toBeInstanceOf(StravaToken::class);
     expect($token->user_id)->toBe(1);
     expect($token->athlete_id)->toBe('12345');
-    expect($token->expires_at)->toBeInstanceOf(\Carbon\Carbon::class);
+    expect($token->expires_at)->toBeInstanceOf(Carbon::class);
 });
 
 it('encrypts token fields when stored', function () {
@@ -51,7 +52,7 @@ it('encrypts token fields when stored', function () {
     ]);
 
     // Get raw values from database
-    $rawToken = \DB::table('strava_tokens')->where('id', $token->id)->first();
+    $rawToken = DB::table('strava_tokens')->where('id', $token->id)->first();
 
     // Raw values should be encrypted (not equal to plain text)
     expect($rawToken->access_token)->not->toBe('plain_access_token');

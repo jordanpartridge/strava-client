@@ -20,7 +20,7 @@ class CallBackController
      */
     public function __invoke(Request $request, StravaClient $stravaClient)
     {
-        $state = trim($request->get('state'));
+        $state = trim($request->input('state'));
         if (empty($state) || ! preg_match('/^[a-zA-Z0-9]+$/', $state)) {
             abort(400, 'Invalid state format');
         }

@@ -18,9 +18,15 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         php: [8.3, 8.2]
-        laravel: [11.*, 10.*]
+        laravel: [13.*, 12.*, 11.*, 10.*]
         stability: [prefer-stable]
         include:
+          - laravel: 13.*
+            testbench: 11.*
+            carbon: ^3.0
+          - laravel: 12.*
+            testbench: 10.*
+            carbon: ^3.0
           - laravel: 11.*
             testbench: 9.*
             carbon: ^2.63
@@ -41,6 +47,12 @@ jobs:
             testbench: 8.*
             carbon: ^2.63
             stability: prefer-lowest
+        exclude:
+          # Laravel 12+ requires PHP 8.3+
+          - php: 8.2
+            laravel: 12.*
+          - php: 8.2
+            laravel: 13.*
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
 

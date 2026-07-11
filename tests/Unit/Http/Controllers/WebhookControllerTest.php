@@ -7,6 +7,7 @@ use JordanPartridge\StravaClient\Events\ActivityUpdated;
 use JordanPartridge\StravaClient\Events\AthleteDeauthorized;
 use JordanPartridge\StravaClient\Http\Controllers\WebhookController;
 use JordanPartridge\StravaClient\Services\WebhookVerificationService;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 beforeEach(function () {
     $this->verificationService = Mockery::mock(WebhookVerificationService::class);
@@ -34,7 +35,7 @@ it('aborts verification with invalid token', function () {
     ]);
 
     expect(fn () => $this->controller->__invoke($request))
-        ->toThrow(\Symfony\Component\HttpKernel\Exception\HttpException::class);
+        ->toThrow(HttpException::class);
 });
 
 it('processes activity created webhook', function () {

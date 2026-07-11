@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class StravaToken extends Model
 {
     /**
-     * @var array<int,string>
+     * @var list<string>
      */
     protected $fillable = ['access_token', 'athlete_id', 'refresh_token', 'user_id', 'expires_at'];
 
