@@ -1,7 +1,11 @@
 <?php
 
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JordanPartridge\StravaClient\Concerns\HasStravaTokens;
 use JordanPartridge\StravaClient\Connector;
+use JordanPartridge\StravaClient\Exceptions\Request\RateLimitExceededException;
 use JordanPartridge\StravaClient\Models\StravaToken;
 use JordanPartridge\StravaClient\StravaClient;
 use Saloon\Http\Faking\MockClient;
@@ -147,7 +151,7 @@ test('handling rate limit with proper exception', function () {
     $client = new StravaClient($connector);
 
     expect(fn () => $client->activityForAthlete(1, 10))
-        ->toThrow(\JordanPartridge\StravaClient\Exceptions\Request\RateLimitExceededException::class);
+        ->toThrow(RateLimitExceededException::class);
 });
 
 test('handling invalid oauth state', function () {
@@ -189,10 +193,10 @@ test('concurrent token refresh attempts', function () {
 function createTestUser()
 {
     // Create a basic User model for testing
-    $user = new class extends \Illuminate\Database\Eloquent\Model implements \Illuminate\Contracts\Auth\Authenticatable
+    $user = new class extends Model implements Illuminate\Contracts\Auth\Authenticatable
     {
-        use \Illuminate\Auth\Authenticatable;
-        use \JordanPartridge\StravaClient\Concerns\HasStravaTokens;
+        use Authenticatable;
+        use HasStravaTokens;
 
         protected $table = 'users';
 

@@ -260,6 +260,6 @@ describe('service unavailable handling', function () {
         $this->connector->withMockClient($mockClient);
 
         expect(fn () => $this->client->getActivity(12345))
-            ->toThrow(\RuntimeException::class, 'Strava service unavailable after 4 attempts');
+            ->toThrow(RuntimeException::class, 'Strava service unavailable after 4 attempts');
     });
 });

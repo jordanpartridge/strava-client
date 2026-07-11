@@ -10,6 +10,7 @@ use JordanPartridge\StravaClient\Models\StravaToken;
 use JordanPartridge\StravaClient\StravaClient;
 use Saloon\Http\Faking\MockClient;
 use Saloon\Http\Faking\MockResponse;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 beforeEach(function () {
     Config::set('strava-client.redirect_after_connect', '/dashboard');
@@ -82,7 +83,7 @@ it('aborts with 400 for empty state', function () {
     ]);
 
     expect(fn () => $this->controller->__invoke($request, $this->stravaClient))
-        ->toThrow(Symfony\Component\HttpKernel\Exception\HttpException::class);
+        ->toThrow(HttpException::class);
 });
 
 it('aborts with 400 for invalid state format', function () {
@@ -92,7 +93,7 @@ it('aborts with 400 for invalid state format', function () {
     ]);
 
     expect(fn () => $this->controller->__invoke($request, $this->stravaClient))
-        ->toThrow(Symfony\Component\HttpKernel\Exception\HttpException::class);
+        ->toThrow(HttpException::class);
 });
 
 it('aborts with 400 when state not found in cache', function () {
@@ -107,7 +108,7 @@ it('aborts with 400 when state not found in cache', function () {
         ->andReturn(null);
 
     expect(fn () => $this->controller->__invoke($request, $this->stravaClient))
-        ->toThrow(Symfony\Component\HttpKernel\Exception\HttpException::class);
+        ->toThrow(HttpException::class);
 });
 
 it('aborts with 400 when state data is invalid', function () {
@@ -121,7 +122,7 @@ it('aborts with 400 when state data is invalid', function () {
         ->andReturn(['invalid' => 'data']);
 
     expect(fn () => $this->controller->__invoke($request, $this->stravaClient))
-        ->toThrow(Symfony\Component\HttpKernel\Exception\HttpException::class);
+        ->toThrow(HttpException::class);
 });
 
 it('aborts with 404 when user not found', function () {
@@ -140,7 +141,7 @@ it('aborts with 404 when user not found', function () {
         ->andReturn(null);
 
     expect(fn () => $this->controller->__invoke($request, $this->stravaClient))
-        ->toThrow(Symfony\Component\HttpKernel\Exception\HttpException::class);
+        ->toThrow(HttpException::class);
 });
 
 it('correctly calculates token expiration time', function () {
