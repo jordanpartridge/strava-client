@@ -42,8 +42,8 @@ class WebhookController extends Controller
 
     private function handleSubscriptionChallenge(Request $request): JsonResponse
     {
-        $verifyToken = $request->get('hub_verify_token');
-        $challenge = $request->get('hub_challenge');
+        $verifyToken = $request->input('hub_verify_token');
+        $challenge = $request->input('hub_challenge');
 
         if ($verifyToken !== config('strava-client.webhook.verify_token')) {
             abort(Response::HTTP_FORBIDDEN, 'Invalid verify token');
