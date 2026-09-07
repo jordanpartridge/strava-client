@@ -81,4 +81,6 @@ jobs:
         run: composer show -D
 
       - name: Execute tests
-        run: vendor/bin/pest --ci
+        # phpunit.xml.dist requests coverage reports; this job has coverage: none.
+        # Pest 4 / PHPUnit 12 exits 1 on that warning before tests run.
+        run: vendor/bin/pest --ci --no-coverage

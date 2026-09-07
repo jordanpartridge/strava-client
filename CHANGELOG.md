@@ -4,6 +4,9 @@ All notable changes to `strava-client` will be documented in this file.
 
 ## Unreleased
 
+### Fixed
+- Pest 4 / PHPUnit 12 no longer fail the run-tests matrix when phpunit.xml.dist asks for coverage reports but the job has no coverage driver (`--no-coverage` on `composer test` and CI).
+
 ### Added
 - Comprehensive documentation
   - Directory-specific README files
